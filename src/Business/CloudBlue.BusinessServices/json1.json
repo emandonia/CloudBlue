@@ -1,0 +1,23 @@
+[
+  {
+    "AnchorText": "{{AgentName}}",
+    "NeedsExtraMapping": false,
+    "PropertyName": "AgentName"
+  },
+  {
+    "AnchorText": "{{BranchName}}",
+    "NeedsExtraMapping": false,
+    "PropertyName": "BranchName"
+  },
+  {
+    "PropertyName": "CompanyName",
+    "AnchorText": "{{CompanyName}}", 
+    "NeedsExtraMapping": false
+  },
+  
+  {
+    "PropertyName": "CurrentUserName",
+    "AnchorText": "{{CurrentUserName}}", 
+    "NeedsExtraMapping": false
+  }
+]

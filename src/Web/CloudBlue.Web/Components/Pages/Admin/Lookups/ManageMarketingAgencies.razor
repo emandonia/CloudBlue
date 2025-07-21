@@ -1,0 +1,86 @@
+﻿@page "/lookups/marketing-agencies"
+@using CloudBlue.Domain.DomainModels
+@using CloudBlue.Domain.GenericTypes
+@using Radzen.Blazor;
+
+<style>
+    .rz-grid-table {
+        width: 1095px !important;
+    }
+
+        .rz-grid-table td .rz-cell-data {
+            overflow-wrap: break-word;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+</style>
+<PageTitle> Marketing Agencies </PageTitle>
+
+
+<RadzenColumn SizeMD="12">
+
+<RadzenStack>
+    
+
+<RadzenRow>
+
+    
+    <RadzenDataGrid ColumnWidth="200px"   Count="_totalNumber" AllowSorting="true"   ShowPagingSummary="true" PageSizeOptions="@(new[] { 5, 10, 20, 30 })"   AllowPaging="true" LoadData="LoadData" Data="@_items" TItem="LookupItem<int>">
+        <Columns>
+            <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="LookupItem<int>" Property="ItemId" Title="Id" Pickable="false" Sortable="true" Filterable="false">
+            </RadzenDataGridColumn>
+
+
+            <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="LookupItem<int>" Property="ItemName" Title="Agency" Sortable="true" Filterable="false">
+            </RadzenDataGridColumn>
+
+                  
+             
+        </Columns>
+
+    </RadzenDataGrid>
+</RadzenRow>
+      
+<RadzenTemplateForm TItem="CreateLookupModel" Data="@_model" Submit="@FormSubmit">
+
+
+        <RadzenFieldset AllowCollapse="false">
+            
+          
+            <ChildContent>
+                <RadzenRow  JustifyContent="JustifyContent.Center" lignItems="AlignItems.Center">
+                    <RadzenColumn Size="12"  SizeMD="6">
+                        <RadzenFormField Text="Lookup Name" Variant="Variant.Outlined" Style="width: 100%;">
+                               <Start>
+
+                        <RadzenIcon class="requiredIcon" />
+                             
+
+                    </Start>
+                    <ChildContent>
+
+                                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@_model.LookupName" Name="LookupName" />
+                                    <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="LookupName" ComponentProperty="Value" />
+                            </ChildContent>
+                        </RadzenFormField>
+                           
+                        </RadzenColumn>
+                        
+                                   <RadzenColumn Size="12"  SizeMD="6">
+                        <RadzenFormField Text="" Variant="Variant.Outlined" Style="width: 100%;">
+                              
+                    <ChildContent>
+
+                                <RadzenButton   ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+
+                                </ChildContent>
+                                </RadzenFormField>
+                            </RadzenColumn>
+                
+ 
+</RadzenRow>
+</ChildContent>
+</RadzenFieldset>
+</RadzenTemplateForm>
+</RadzenStack>
+</RadzenColumn>

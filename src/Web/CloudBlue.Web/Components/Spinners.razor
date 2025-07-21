@@ -1,0 +1,121 @@
+﻿@using CloudBlue.Web.Services
+@* @using Faso.Blazor.SpinKit  *@
+
+@inject SpinnerService SpinnerService
+
+<style>
+
+    .spinner-container {
+        display: flex;
+        flex-direction: column;
+        left: 40%;
+        position: fixed;
+        top: 50%;
+        z-index: 9999;
+    }
+
+    .spinner-overlay {
+        align-items: center;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        height: 100%;
+        justify-content: center;
+        left: 0;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 999;
+    }
+
+    
+    .spinner-border {
+        animation: spin 0.75s linear infinite;
+        border: 0.4em solid rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        border-top: 0.4em solid #007bff;
+        height: 3rem;
+        width: 3rem;
+    }
+</style>
+@if(IsVisible)
+{
+    <div class="spinner-overlay">
+        <div class="spinner-container">
+
+            <ul id="twflag" class="tw-flag">
+
+                <li class="column"></li>
+                <li class="column"></li>
+                <li class="column"></li>
+                <li class="column"></li>
+                <li class="column"></li>
+                <li class="column"></li>
+                <li class="column"></li>
+                <li class="column"></li>
+                <li class="column"></li>
+                <li class="column"></li>
+                <li class="column"></li>
+                <li class="column"></li>
+                <li class="column"></li>
+                <li class="column"></li>
+                <li class="column"></li>
+            </ul>
+
+
+            @*  <img src="images/logo.png" alt="Company Logo" class="logo-flag" style="width: 100px;" /> *@
+            <div class="wrapper ten">
+                <div>
+                    <h3 class="bounce">
+                        <span>C</span>
+                        <span>L</span>
+                        <span>O</span>
+                        <span>U</span>
+                        <span>D</span>
+                        <span>&nbsp; </span>
+                        <span>B</span>
+                        <span>L</span>
+                        <span>U</span>
+                        <span>E</span>
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+
+    //  <SpinKitChasingDots />
+    //<SpinKitRotatingPlane/ >
+    //<SpinKitDoubleBounce/ >
+    //<SpinKitWave/ >
+    //<SpinKitWanderingCube/ >
+    //<SpinKitPulse/ >
+    //<SpinKitChasingDots/ >
+    //<SpinKitThreeBounce/ >
+    //<SpinKitCircle/ >
+    //<SpinKitCubeGrid/ >
+    //<SpinKitFadingCircle/ >
+    //<SpinKitFoldingCube/ >
+
+    protected bool IsVisible { get; set; }
+
+    protected override void OnInitialized()
+    {
+        SpinnerService.OnShow += ShowSpinner;
+        SpinnerService.OnHide += HideSpinner;
+    }
+
+    public void ShowSpinner()
+    {
+        IsVisible = true;
+        StateHasChanged();
+    }
+
+    public void HideSpinner()
+    {
+        IsVisible = false;
+        StateHasChanged();
+    }
+
+}

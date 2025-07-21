@@ -1,0 +1,716 @@
+﻿@page "/calls/create"
+@using CloudBlue.Domain.DomainModels
+@using CloudBlue.Domain.DomainModels.CallLeads
+@using CloudBlue.Domain.GenericTypes
+@inject TooltipService TooltipService
+<style>
+   /*  .rz-grid-table { width: auto !important; }
+    */ 
+
+    
+    
+    
+    
+    
+    
+    
+    
+</style>
+
+
+<h3>New Call</h3>
+<RadzenColumn SizeMD="12" Visible="@_showContent">
+<RadzenTemplateForm TItem="ClientPhoneModel" Data="@_clientPhoneItem" Submit="@SearchClient">
+    <RadzenFieldset AllowCollapse="true">
+        <HeaderTemplate>
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+                <RadzenIcon Icon="search" class="titleSpan"/>
+                <b>
+                    <span class="titleSpan">Find Client</span>
+                </b>
+            </RadzenStack>
+        </HeaderTemplate>
+        <ChildContent>
+
+
+            <RadzenRow JustifyContent="JustifyContent.Center">
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="3">
+                        <RadzenFormField Variant="Variant.Outlined" Text="Country Code">
+
+                            <RadzenDropDown AllowClear="true" Name="CountryId" @bind-Value="@_clientPhoneItem.CountryId" Data="@_countries" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Country" Style="width: 100%;">
+                                <Template Context="newcontext">
+                                    @{
+                                        var val = newcontext as LookupItem<int>;
+                                    }
+                                    <span>@($"({val.ExtraId}) {val.ItemName}")</span>
+
+                                </Template>
+                            </RadzenDropDown>
+                            <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="CountryId" ComponentProperty="Value"/>
+
+                        </RadzenFormField>
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="3">
+
+                        <RadzenFormField Text="Area Code" Variant="Variant.Outlined">
+                            <RadzenTextBox MaxLength="4" Name="AreaCode" @bind-Value="@_clientPhoneItem.AreaCode" oninput="applyChange(4)"
+                                           onkeypress="allowOnlyNumbers(event)"/>
+                            <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="AreaCode"/>
+
+
+                        </RadzenFormField>
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="3">
+
+                        <RadzenFormField Text="Phone" Variant="Variant.Outlined">
+                            <RadzenTextBox Name="Phone" MaxLength="8" @bind-Value="@_clientPhoneItem.Phone" oninput="applyChange(8)"
+                                           onkeypress="allowOnlyNumbers(event)"/>
+                            <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="Phone"/>
+
+                        </RadzenFormField>
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="3">
+
+
+                        <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Flat" Shade="Shade.Lighter" Icon="search" Text="Search"></RadzenButton>
+
+                    </RadzenColumn>
+
+                </RadzenStack>
+
+            </RadzenRow>
+
+
+        </ChildContent>
+
+    </RadzenFieldset>
+
+    <RadzenCard Variant="Variant.Flat" Visible="@_messageVisible" class="@_cssClass">
+        <RadzenText TextStyle="TextStyle.Subtitle1" TagName="TagName.H3">@_title</RadzenText>
+        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">@_message</RadzenText>
+
+    </RadzenCard>
+
+</RadzenTemplateForm>
+
+<RadzenTemplateForm Data="@_callCreateModel" TItem="CallCreateModel" Submit="@CreateCallAsync">
+
+@* Client Info *@
+<RadzenFieldset AllowCollapse="true">
+    <HeaderTemplate>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+            <RadzenIcon Icon="account_box" class="titleSpan"/>
+            <b>
+                <span class="titleSpan">Client Info</span>
+            </b>
+        </RadzenStack>
+    </HeaderTemplate>
+    <ChildContent>
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="Client Type" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenRadioButtonList Disabled="_disabled || _readOnly" class="rz-m-2 rz-mt-2" Orientation="Orientation.Horizontal" @bind-Value="@_callCreateModel.ClientInfo.ClientTypeId"
+                                           Data="_clientTypes"
+                                           TextProperty="ItemName" ValueProperty="ItemId"
+                                           TValue="int">
+
+                    </RadzenRadioButtonList>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="Client Title" Variant="Variant.Outlined" Style="width: 100%;">
+                    <Start>
+
+                        <RadzenIcon class="requiredIcon"/>
+
+
+                    </Start>
+                    <ChildContent>
+                        <RadzenDropDown AllowClear="true" Name="ClientTitleId" @bind-Value="@_callCreateModel.ClientInfo.ClientTitleId" Data="@_clientTitles" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Title" Style="width: 100%;" ReadOnly="_readOnly" Disabled="_disabled"/>
+                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="ClientTitleId" ComponentProperty="Value"/>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+        </RadzenRow>
+
+
+        <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="12" SizeMD="6">
+
+                <RadzenFormField Text="Client Name" Variant="Variant.Outlined" Style="width: 100%;">
+                    <Start>
+
+                        <RadzenIcon class="requiredIcon"/>
+
+
+                    </Start>
+                    <ChildContent>
+                        <RadzenTextBox Disabled="_disabled" ReadOnly="_readOnly" style="display: block; width: 100%" @bind-Value="@_callCreateModel.ClientInfo.ClientName" Name="ClientName"/>
+                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="ClientName" ComponentProperty="Value"/>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="Client Name Arabic" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenTextBox Disabled="_disabled" ReadOnly="_disableArabicName" style="display: block; width: 100%" @bind-Value="@_callCreateModel.ClientInfo.ClientArabicName" Name="ClientArabicName"/>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+        </RadzenRow>
+
+        <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="Date of Birth" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenDatePicker AllowClear="true" Disabled="_disabled" AllowInput="false" ReadOnly="_disableBirthDate" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_callCreateModel.ClientInfo.BirthDate" Name="BirthDate"/>
+                    <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="BirthDate" ComponentProperty="Value"/>
+
+                </RadzenFormField>
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="Gender" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenDropDown AllowClear="true" Name="GenderId" Disabled="_disabled" ReadOnly="_disableGender" @bind-Value="@_callCreateModel.ClientInfo.GenderId" Data="@_genders" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Gender" Style="width: 100%;"/>
+
+
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+        </RadzenRow>
+
+        <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenFormField Text="Work Field" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenDropDown AllowClear="true" Disabled="_disabled" ReadOnly="_disableWorkField" Name="WorkFieldId" @bind-Value="@_callCreateModel.ClientInfo.WorkFieldId" Data="@_workFields" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Work Field" Style="width: 100%;"/>
+
+
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenFormField Text="Occupation" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenTextBox Disabled="_disabled" ReadOnly="_disableOccupation" style="display: block; width: 100%" @bind-Value="@_callCreateModel.ClientInfo.Occupation" Name="Occupation"/>
+
+                </RadzenFormField>
+
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenFormField Text="Company" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenTextBox Disabled="_disabled || _disableCompanyName" style="display: block; width: 100%" @bind-Value="@_callCreateModel.ClientInfo.ClientCompanyName" Name="ClientCompanyName"/>
+
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+        </RadzenRow>
+
+
+    </ChildContent>
+</RadzenFieldset>
+
+@* Client Contacting Devices *@
+<RadzenFieldset AllowCollapse="true">
+    <HeaderTemplate>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+            <RadzenIcon Icon="contact_phone" class="titleSpan"/>
+            <b>
+                <span class="titleSpan">Client Contacting Devices</span>
+            </b>
+        </RadzenStack>
+    </HeaderTemplate>
+    <ChildContent>
+
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+
+            <RadzenColumn Size="12" SizeMD="4">
+
+
+                <RadzenDataGrid @ref="_devicesGrid" GridLines="DataGridGridLines.Both" Data="@_clientPhoneItems" AllowPaging="true" AllowSorting="true"
+                                Count="@_clientPhoneItems.Count" TItem="ClientPhoneModel">
+                    <HeaderTemplate>
+
+                        <RadzenButton Click="@ShowInlineDialog" Icon="add_circle" MouseEnter="@(args => ShowTooltip(args, "Add Device"))" Disabled="_disabled" ButtonStyle="ButtonStyle.Primary"/>
+
+
+                    </HeaderTemplate>
+                    <Columns>
+                        <RadzenDataGridColumn Filterable="false" Sortable="true" TItem="ClientPhoneModel" Property="@nameof(ClientPhoneModel.DeviceType)" Title="Type">
+
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="ClientPhoneModel" Filterable="false" Property="@nameof(ClientPhoneModel.DeviceInfo)" Sortable="true" Title="Info">
+
+                        </RadzenDataGridColumn>
+
+                        <RadzenDataGridColumn Title="Remove" Sortable="true" Filterable="false" TItem="ClientPhoneModel">
+                            <Template Context="clientPhoneModel">
+                                <RadzenButton Visible="@clientPhoneModel.CanBeRemoved"
+                                              Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" aria-label="Delete"
+                                              MouseEnter="@(args => ShowTooltip(args, "Remove Device"))"
+                                              Click="@(_ => RemoveItem(clientPhoneModel.DeviceInfo))"
+                                              @onclick:stopPropagation="true">
+
+                                </RadzenButton>
+                            </Template>
+
+                        </RadzenDataGridColumn>
+
+                    </Columns>
+
+
+                </RadzenDataGrid>
+            </RadzenColumn>
+
+
+        </RadzenRow>
+    </ChildContent>
+</RadzenFieldset>
+
+
+<RadzenFieldset AllowCollapse="true">
+    <HeaderTemplate>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+            <RadzenIcon class="liLeadSourceIcon">
+
+            </RadzenIcon>
+            <b>
+                <span class="titleSpan">Client Source</span>
+            </b>
+        </RadzenStack>
+    </HeaderTemplate>
+    <ChildContent>
+        <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="Lead Source" Variant="Variant.Outlined" Style="width: 100%;">
+                    <Start>
+
+                        <RadzenIcon class="requiredIcon"/>
+
+
+                    </Start>
+                    <ChildContent>
+                        <RadzenDropDown AllowClear="true" Disabled="_disabled" Name="LeadSourceId" @bind-Value="@_callCreateModel.LeadSourceInfo.LeadSourceId" Data="@_leadSources" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Lead Source" Style="width: 100%;"/>
+                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="LeadSourceId" ComponentProperty="Value"/>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="Extra Info" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <RadzenTextBox Disabled="_disabled" style="display: block; width: 100%" @bind-Value="@_callCreateModel.LeadSourceInfo.LeadSourceExtra" Name="ClientName"/>
+
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+        </RadzenRow>
+
+        <RadzenRow AlignItems="AlignItems.Center">
+
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="How did You Hear About us?" Variant="Variant.Outlined" Style="width: 100%;">
+                    <Start>
+
+                        <RadzenIcon class="requiredIcon"/>
+
+
+                    </Start>
+                    <ChildContent>
+                        <RadzenDropDown AllowClear="true" Disabled="_disabled"
+                                        Change="KnowSourceChanged"
+                                        Name="KnowSourceId" @bind-Value="@_callCreateModel.LeadSourceInfo.KnowSourceId" Data="@_knowItems" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Know Item" Style="width: 100%;"/>
+                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="KnowSourceId" ComponentProperty="Value"/>
+                    </ChildContent>
+                </RadzenFormField>
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="How did You Hear About us more?" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <RadzenDropDown AllowClear="true" Disabled="_disabled" Name="KnowSubSourceId" @bind-Value="@_callCreateModel.LeadSourceInfo.KnowSubSourceId" Data="@_knowSubItems" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Know Sub Item" Style="width: 100%;"/>
+                </RadzenFormField>
+            </RadzenColumn>
+
+
+        </RadzenRow>
+
+
+    </ChildContent>
+</RadzenFieldset>
+
+
+@* Call Details *@
+<RadzenFieldset AllowCollapse="true">
+    <HeaderTemplate>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+            <RadzenIcon Icon="call_quality" class="titleSpan"/>
+            <b>
+                <span class="titleSpan">Call Details</span>
+            </b>
+        </RadzenStack>
+    </HeaderTemplate>
+    <ChildContent>
+        <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="Call Type" Variant="Variant.Outlined" Style="width: 100%;">
+                    <Start>
+
+                        <RadzenIcon class="requiredIcon"/>
+
+
+                    </Start>
+                    <ChildContent>
+                        <RadzenDropDown AllowClear="true" Change="CallTypeChanged" Disabled="_disabled" Name="CallTypeId" @bind-Value="@_callCreateModel.CallTypeId" Data="@_callTypes" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Call Type" Style="width: 100%;"/>
+                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="CallTypeId" ComponentProperty="Value"/>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="Comments" Variant="Variant.Outlined" Style="width: 100%;">
+                    <Start>
+
+                        <RadzenIcon class="requiredIcon"/>
+
+
+                    </Start>
+                    <ChildContent>
+                        <RadzenTextArea Disabled="_disabled" style="display: block; width: 100%" @bind-Value="@_callCreateModel.CallComment" Name="CallComment"/>
+                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="CallComment" ComponentProperty="Value"/>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+        </RadzenRow>
+
+
+    </ChildContent>
+</RadzenFieldset>
+
+
+@* Request Info *@
+<RadzenFieldset Visible="_isBrokerage" AllowCollapse="true">
+    <HeaderTemplate>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+            <RadzenIcon Icon="quiz" class="titleSpan"/>
+            <b>
+                <span class="titleSpan">Request Info</span>
+            </b>
+        </RadzenStack>
+    </HeaderTemplate>
+    <ChildContent>
+        <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="Sales Type" Variant="Variant.Outlined" Style="width: 100%;">
+                    <Start>
+
+                        <RadzenIcon class="requiredIcon"/>
+
+
+                    </Start>
+                    <ChildContent>
+                        <RadzenDropDown AllowClear="true" Disabled="_disabled" Change="SalesTypeChanged" Name="SalesTypeId" @bind-Value="@_callCreateModel.LeadTicketModel.SalesTypeId" Data="@_salesTypes" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Sales Type" Style="width: 100%;"/>
+                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="SalesTypeId" ComponentProperty="Value"/>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="Service Type" Variant="Variant.Outlined" Style="width: 100%;">
+                    <Start>
+
+                        <RadzenIcon class="requiredIcon"/>
+
+
+                    </Start>
+                    <ChildContent>
+                        <RadzenDropDown AllowClear="true" Disabled="_disabled" Name="ServiceId" @bind-Value="@_callCreateModel.LeadTicketModel.ServiceId" Data="@_services" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Service" Style="width: 100%;"/>
+                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="ServiceId" ComponentProperty="Value"/>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+        </RadzenRow>
+
+        <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="Usage" Variant="Variant.Outlined" Style="width: 100%;">
+                    <Start>
+
+                        <RadzenIcon class="requiredIcon"/>
+
+
+                    </Start>
+                    <ChildContent>
+                        <RadzenDropDown AllowClear="true" Change="UsageChanged" Disabled="_disabled" Name="UsageId" @bind-Value="@_callCreateModel.LeadTicketModel.UsageId" Data="@_usages" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Usage" Style="width: 100%;"/>
+                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="UsageId" ComponentProperty="Value"/>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="Property Type" Variant="Variant.Outlined" Style="width: 100%;">
+                    <Start>
+
+                        <RadzenIcon class="requiredIcon"/>
+
+
+                    </Start>
+                    <ChildContent>
+                        <RadzenDropDown AllowClear="true" Disabled="_disabled" Name="PropertyTypeId" @bind-Value="@_callCreateModel.LeadTicketModel.PropertyTypeId" Data="@_propertyTypes" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Property Type" Style="width: 100%;"/>
+                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="PropertyTypeId" ComponentProperty="Value"/>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+        </RadzenRow>
+
+
+    </ChildContent>
+</RadzenFieldset>
+
+<RadzenFieldset Visible="_isBrokerage" AllowCollapse="true">
+    <HeaderTemplate>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+            <RadzenIcon Icon="location_on" class="titleSpan"/>
+
+            <b>
+                <span class="titleSpan">Location</span>
+            </b>
+        </RadzenStack>
+    </HeaderTemplate>
+    <ChildContent>
+        <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="Country" Variant="Variant.Outlined" Style="width: 100%;">
+                    <Start>
+
+                        <RadzenIcon class="requiredIcon"/>
+
+
+                    </Start>
+                    <ChildContent>
+                        <RadzenDropDown AllowClear="true" Disabled="_disabled" Name="CountryId" Change="CountryChanged" @bind-Value="@_callCreateModel.Location.CountryId" Data="@_countries" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Country" Style="width: 100%;"/>
+                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="CountryId" ComponentProperty="Value"/>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="City" Variant="Variant.Outlined" Style="width: 100%;">
+                    <Start>
+
+                        <RadzenIcon class="requiredIcon"/>
+
+
+                    </Start>
+                    <ChildContent>
+                        <RadzenDropDown AllowClear="true" Disabled="_disabled" Name="CityId" @bind-Value="@_callCreateModel.Location.CityId" Data="@_cities" Change="CityChanged" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select City" Style="width: 100%;"/>
+                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="CityId" ComponentProperty="Value"/>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+        </RadzenRow>
+
+        <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="District" Variant="Variant.Outlined" Style="width: 100%;">
+                    <Start>
+
+                        <RadzenIcon class="requiredIcon"/>
+
+
+                    </Start>
+                    <ChildContent>
+                        <RadzenDropDown AllowClear="true" Change="DistrictChanged" Disabled="_disabled" Name="DistrictId" @bind-Value="@_callCreateModel.Location.DistrictId" Data="@_districts" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select District" Style="width: 100%;"/>
+                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="DistrictId" ComponentProperty="Value"/>
+                    </ChildContent>
+
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="Neighborhood" Variant="Variant.Outlined" Style="width: 100%;">
+                    <Start>
+
+                        <RadzenIcon class="requiredIcon"/>
+
+
+                    </Start>
+                    <ChildContent>
+                        <RadzenDropDown AllowClear="true" Disabled="_disabled" Name="NeighborhoodId" @bind-Value="@_callCreateModel.Location.NeighborhoodId" Data="@_neighborhoods" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Neighborhood" Style="width: 100%;"/>
+                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="NeighborhoodId" ComponentProperty="Value"/>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+        </RadzenRow>
+
+
+    </ChildContent>
+</RadzenFieldset>
+
+
+<RadzenFieldset Visible="_isBrokerage" AllowCollapse="true">
+    <HeaderTemplate>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+            <RadzenIcon Icon="attach_money" class="titleSpan"/>
+
+            <b>
+                <span class="titleSpan">Budget</span>
+            </b>
+        </RadzenStack>
+    </HeaderTemplate>
+    <ChildContent>
+        <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenFormField Text="Budget From" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <RadzenNumeric Name="BudgetFrom" @bind-Value="@_callCreateModel.LeadTicketModel.ClientBudget.BudgetFrom"></RadzenNumeric>
+                    <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="BudgetFrom" ComponentProperty="Value"/>
+
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenFormField Text="Budget To" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <RadzenNumeric Name="BudgetTo" @bind-Value="@_callCreateModel.LeadTicketModel.ClientBudget.BudgetTo"></RadzenNumeric>
+                    <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="BudgetTo" ComponentProperty="Value"/>
+
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenFormField Text="Currency" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <RadzenDropDown AllowClear="true" Disabled="_disabled" Name="CurrencyId" @bind-Value="@_callCreateModel.LeadTicketModel.ClientBudget.CurrencyId" Data="@_currencies" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Currency" Style="width: 100%;"/>
+
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+        </RadzenRow>
+
+
+    </ChildContent>
+</RadzenFieldset>
+
+<RadzenFieldset AllowCollapse="true" Visible="@(_callCreateModel.CallTypeId > 0)">
+    <HeaderTemplate>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+            <RadzenIcon Icon="call_quality" class="titleSpan"/>
+            <b>
+                <span class="titleSpan">Assigning</span>
+            </b>
+        </RadzenStack>
+    </HeaderTemplate>
+    <ChildContent>
+
+        <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Company" Variant="Variant.Outlined" Style="width: 100%;">
+                    <Start>
+
+                        <RadzenIcon class="requiredIcon"/>
+
+
+                    </Start>
+                    <ChildContent>
+                        <RadzenDropDown AllowClear="true" Disabled="_disabled" Name="CompanyId" @bind-Value="@_callCreateModel.CompanyId" Data="@_companies" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" Change="CompanyChanged" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Company" Style="width: 100%;"/>
+                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="CompanyId" ComponentProperty="Value"/>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Branch" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <RadzenDropDown AllowClear="true" Disabled="_disabled" Name="BranchId" @bind-Value="@_callCreateModel.BranchId" Data="@_branches" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Branch" Style="width: 100%;" Change="BranchChanged"/>
+                    <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="BranchId" ComponentProperty="Value"/>
+
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+            <RadzenColumn Size="12" Visible="@_isBrokerage" SizeMD="6">
+                <RadzenFormField Text="Agent" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <RadzenDropDown Name="AgentId" @bind-Value="@_callCreateModel.LeadTicketModel.AgentId" Data="@_agents" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Agent" AllowClear="true" Style="width: 100%;">
+                        <Template Context="newContext">
+                            @{
+                                var val = (LookupItem<int>)newContext;
+                            }
+
+                            <RadzenIcon MouseEnter="@(args => ShowTooltip(args, val.ExtraId))" class="@($"li{val.ExtraId}Icon")">
+
+                            </RadzenIcon>
+                            <b>
+                                <span>@($"{val.ItemName} ({val.ItemId})")</span>
+                            </b>
+                        </Template>
+                    </RadzenDropDown>
+
+
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+        </RadzenRow>
+
+
+    </ChildContent>
+</RadzenFieldset>
+
+
+<RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem" class="rz-mt-8 rz-mb-4">
+    <RadzenButton ButtonType="ButtonType.Submit" Disabled="@(_disabled || _isBusy)" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Primary" Icon="save" Text="Save"/>
+    <RadzenButton ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Large" Icon="cancel" Text="Reset" Click="@Cancel"/>
+</RadzenStack>
+</RadzenTemplateForm>
+</RadzenColumn>

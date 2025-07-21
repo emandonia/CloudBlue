@@ -1,0 +1,150 @@
+﻿@inject NavigationManager NavigationManager
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <base href="/"/>
+
+    <link rel="stylesheet" href="@Assets["lib/bootstrap/dist/css/bootstrap.min.css"]"/>
+    <link rel="stylesheet" href="@Assets["app.css"]"/>
+    <link rel="stylesheet" href="@Assets["css/clock-style.css"]"/>
+    <link rel="stylesheet" href="@Assets["CloudBlue.Web.styles.css"]"/>
+    <link rel="stylesheet" href="@Assets["css/cloud-blue-custom.css"]"/>
+    <link rel="stylesheet" href="@Assets["css/spinner-style.css"]"/>
+    @* <link rel="preload" href="@Assets["fonts/MaterialSymbolsOutlined.woff2"]" as="font" type="font/woff2">
+    <link rel="preload" href="@Assets["fonts/RobotoFlex.woff2"]" as="font" type="font/woff2">
+    <link rel="preload" href="@Assets["fonts/SourceSans3VF-Upright.ttf.woff2"]" as="font" type="font/woff2"> *@
+    @* material3 *@
+    <RadzenTheme Theme="humanistic" @rendermode="InteractiveServer"/>
+
+    @* <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Play&display=swap" />
+ *@
+    @* <link rel="stylesheet" href="@Assets["content/Radzen.Blazor/css/material3-base.css"]"/>
+     *@
+    @*  <link rel="stylesheet" href="@Assets["css/material3-base.css"]"/>
+ *@
+    <link rel="icon" href="favicon-32x32.png"/>
+    <ImportMap/>
+    <HeadOutlet @rendermode="@InteractiveServer"/>
+</head>
+<style>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</style>
+
+<body>
+<Routes @rendermode="@InteractiveServer"/>
+
+<script src="_framework/blazor.web.js"></script>
+<script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Colors).Assembly.GetName()
+                                                           .Version)"></script>
+
+<script src="js/clock.js"></script>
+ <script>
+          window.openWhatsApp = function (phone, message) {
+            const isMobile = /Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
+            const encodedMessage = encodeURIComponent(message || "");
+            const url = isMobile
+                ? `whatsapp://send?phone=${phone}&text=${encodedMessage}`
+                : `https://web.whatsapp.com/send?phone=${phone}&text=${encodedMessage}`;
+            window.open(url, '_blank');
+        };
+
+            window.isMobileDevice = function () {
+                return /Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
+            }
+
+             window.callPhone = function (phoneNumber) {
+                window.location.href = 'tel:' + phoneNumber;
+            };
+         window.openMail = function (to, subject, body) {
+            const encodedSubject = encodeURIComponent(subject || '');
+            const encodedBody = encodeURIComponent(body || '');
+            const mailtoLink = `mailto:${to}?subject=${encodedSubject}&body=${encodedBody}`;
+            window.location.href = mailtoLink;
+        };
+    setTitle = (title) => { document.title = title; };
+
+   
+            function applyChange(sourceId)
+        {
+                
+                let phone=document.getElementById('Phone');
+                let areaCode=document.getElementById('AreaCode');
+
+                        // if(phone==null || areaCode==null)
+                        // {
+                        //     return;
+                        // }
+
+                 if(sourceId==4 && areaCode.value.length == 4) {
+                                                phone.focus();
+
+                             
+                    return;
+                }
+                    if(sourceId==8 && phone.value.length == 0) {
+                                            areaCode.focus();
+                                                
+                         return;
+                    }
+        }
+    function allowOnlyNumbers(event) {
+        const key = event.key;
+        const isCtrlKey = event.ctrlKey || event.metaKey;
+         
+        
+
+        // Allow Ctrl/Command combinations (e.g., Ctrl+C, Ctrl+V)
+        if (isCtrlKey) {
+            return;
+        }
+
+        // Prevent non-numeric input
+        if (!key.match(/[0-9]/) && !["Backspace", "Delete", "ArrowLeft", "ArrowRight"].includes(key)) {
+            event.preventDefault();
+        }
+           
+
+
+
+        }
+
+</script>
+</body>
+
+</html>

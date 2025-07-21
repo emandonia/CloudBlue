@@ -1,0 +1,1760 @@
+﻿@page "/prime-tcrs/view/{id:long}"
+@using CloudBlue.Domain.DomainModels
+@using CloudBlue.Domain.DomainModels.PrimeTcrs
+@using CloudBlue.Domain.Enums
+@inject IJSRuntime Js
+<h3>View Prime Tcr @Id</h3>
+ 
+<style>
+    .rz-grid-table {
+        width: auto !important;
+    }
+
+    .rz-g > div, .rz-datalist-data > li {
+        background-color: var(--rz-datalist-item-background-color);
+        border: var(--rz-datalist-item-border);
+        border-radius: var(--rz-datalist-border-radius);
+        box-shadow: var(--rz-datalist-item-shadow);
+        padding: 0.5rem;
+    }
+
+    .rz-text-subtitle2 {
+        color: #1b1d20 !important;
+        font-family: Roboto, sans-serif !important;
+        font-size: 0.7rem !important;
+        font-weight: 500 !important;
+        letter-spacing: 0.1px !important;
+        line-height: 1.5 !important;
+        margin-block-end: 0.5rem !important;
+        margin-block-start: 0 !important;
+        padding-left: 20px;
+        padding-top: 15px;
+    }
+
+</style>
+
+
+<RadzenTemplateForm Data="@_model" TItem="PrimeTcrFullItem" Submit="@SearchForTcr">
+    <RadzenFieldset AllowCollapse="true" Collapsed="_CollapseSearch" >
+        <HeaderTemplate>
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+                <RadzenIcon Icon="search" class="titleSpan"/>
+                <b>
+                    <span class="titleSpan">Find Prime Tcr</span>
+                </b>
+            </RadzenStack>
+        </HeaderTemplate>
+        <ChildContent>
+
+
+            <RadzenRow JustifyContent="JustifyContent.Center">
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenFormField Variant="Variant.Outlined" Text="Prime Tcr Id">
+                            <RadzenNumeric Name="PrimeTcrId" @bind-Value="@_model.PrimeTcrId"/>
+                            <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="PrimeTcrId"/>
+
+
+                        </RadzenFormField>
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="2">
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="4">
+
+
+                        <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Flat" Shade="Shade.Lighter" Icon="search" Text="Search"></RadzenButton>
+
+                    </RadzenColumn>
+
+                </RadzenStack>
+
+            </RadzenRow>
+
+
+        </ChildContent>
+
+    </RadzenFieldset>
+</RadzenTemplateForm>
+<RadzenTabs TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Server">
+     
+<Tabs>
+    
+<RadzenTabsItem Text="Tcr Info">
+ <Template>
+
+      <span style="display: flex; gap: 6px">
+
+
+                    <b>Tcr Info</b>
+                    <RadzenSplitButton Variant="Variant.Filled" Shade="Shade.Light" Click="@(args => ApplyBulkAction(args))" Text="" Icon="build_circle" class="rz-splitbutton rz-buttonset" ButtonStyle="ButtonStyle.Secondary">
+                        <ChildContent>
+                            <RadzenSplitButtonItem Style="cursor: pointer" Visible="@_model.AllowedActions.Any(z => z ==  SystemPrivileges.PrimeTcrsChangeMarketingChannel)" Icon="calendar_today" Text="Update Marketing Channel" Value="5007"/>
+
+                               @*   <RadzenSplitButtonItem Style="cursor: pointer" Visible="@_model.AllowedActions.Any(z => z ==  SystemPrivileges.PrimeTcrsVerify)" Icon="calendar_today" Text="Verify" Value="5006"/>
+ *@
+                            <RadzenSplitButtonItem Style="cursor: pointer" Visible="@_model.AllowedActions.Any(z => z ==  SystemPrivileges.PrimeTcrsSetResolved)" Icon="calendar_today" Text="Set Resolved" Value="5009" />
+                            <RadzenSplitButtonItem Style="cursor: pointer" Visible="@_model.AllowedActions.Any(z => z ==  SystemPrivileges.PrimeTcrsCanDelete)" Icon="calendar_today" Text="Delete" Value="7037" />
+
+                             
+
+
+
+                            <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Set Contracted" Visible="@_model.AllowedActions.Any(z => z == SystemPrivileges.PrimeTcrsSetContracted)" Value="5003" />
+
+
+                            <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Update Document" Visible="@_model.AllowedActions.Any(z => z == SystemPrivileges.PrimeTcrsAddDocumentDate)" Value="5008" />
+                            <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Add ExtraManager" Visible="@_model.AllowedActions.Any(z => z == SystemPrivileges.PrimeTcrsAddExtraManager)" Value="5012" />
+
+                            <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Update Unit Type" Visible="@_model.AllowedActions.Any(z => z == SystemPrivileges.PrimeTcrsUpdateUnitType)" Value="5013" />
+                                <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Update Unit Number" Visible="@_model.AllowedActions.Any(z => z == SystemPrivileges.PrimeTcrsUpdateUnitNumber)" Value="5015" />
+                            <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Update Sales Volume" Visible="@_model.AllowedActions.Any(z => z == SystemPrivileges.PrimeTcrsUpdateSalesVolume)" Value="5014" />
+
+                        </ChildContent>
+                    </RadzenSplitButton>
+                </span>
+
+                </Template>
+           <ChildContent>
+
+<RadzenFieldset AllowCollapse="true">
+    <HeaderTemplate>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+            <RadzenIcon Icon="account_box" class="titleSpan"/>
+            <b>
+                <span class="titleSpan">Basic Info</span>
+            </b>
+        </RadzenStack>
+    </HeaderTemplate>
+    <ChildContent>
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Company" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@_model.CompanyName</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Branch" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@_model.BranchName</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Client" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@_model.ClientName</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Contact Devices" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@(_model.ClientPhones)</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+        </RadzenRow>
+
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Tcr Id" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@_model.PrimeTcrId</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Tcr Creation Date" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@_model.CreationDateTime.ToString("dd MMMM, yyyy")</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Lead Ticket Id" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@_model.LeadTicketId</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Lead Ticket Creation Date" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@_model.LeadTicketCreationDate.ToString("dd MMMM, yyyy")</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+        </RadzenRow>
+
+
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Status" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@_model.PrimeTcrStatusName</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Invoiced" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@_model.InvoicedStr</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Half Commission" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@_model.HalfCommission</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Half Confirmed" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@_model.HalfConfirmed</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+        </RadzenRow>
+
+
+    </ChildContent>
+</RadzenFieldset>
+<RadzenFieldset AllowCollapse="true">
+    <HeaderTemplate>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+            <RadzenIcon Icon="account_box" class="titleSpan"/>
+            <b>
+                <span class="titleSpan">Unit Info</span>
+            </b>
+        </RadzenStack>
+    </HeaderTemplate>
+    <ChildContent>
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Developer" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@_model.DeveloperName</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Project" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@(_model.ProjectName)</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Usage" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@_model.Usage</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Property Type" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@_model.PropertyTypeName</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+        </RadzenRow>
+
+
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Unit Number" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                            <b>@_model.UnitNumber</b>
+                        </RadzenText>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Sales Volume" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                            <b>@_model.SalesVolume.ToString("##,###.##")</b>
+                        </RadzenText>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Land Area" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                            <b>@_model.LandArea</b>
+                        </RadzenText>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Build-Up Area" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                            <b>@_model.BuildUpArea</b>
+                        </RadzenText>
+
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+        </RadzenRow>
+
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Contract Expected Date" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                            <b>@(_model.ContractExpectedDate == null ? "N/A" : _model.ContractExpectedDate.Value.ToString("dd MMMM, yyyy"))</b>
+                        </RadzenText>
+
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Have Reservation or Contract Form" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                            <b>@(_model.HasDocument ? "Yes" : "No")</b>
+                        </RadzenText>
+
+
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Document Type" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                            <b>@(_model.DocumentType ?? "N/A")</b>
+                        </RadzenText>
+
+
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Document Date" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+
+
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                            <b>@(_model.DocumentDate == null ? "N/A" : _model.DocumentDate.Value.ToString("dd MMMM, yyyy"))</b>
+                        </RadzenText>
+
+
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+        </RadzenRow>
+
+
+    </ChildContent>
+</RadzenFieldset>
+
+<RadzenFieldset AllowCollapse="true">
+    <HeaderTemplate>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+            <RadzenIcon Icon="account_box" class="titleSpan"/>
+            <b>
+                <span class="titleSpan">Sales Info</span>
+            </b>
+        </RadzenStack>
+    </HeaderTemplate>
+    <ChildContent>
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="First Agent" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text">
+                            <b>@(_model.FirstAgentSharePercentage > 0 ? $"{_model.FirstAgentName} ( {(_model.FirstAgentSharePercentage).ToString("00.00")}%)" : "N/A")</b>
+                        </RadzenText>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Second Agent" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text">
+                                            <b>@(_model.SecondAgentSharePercentage > 0 ? $"{_model.SecondAgentName} (% {(_model.SecondAgentSharePercentage).ToString("00.00")}%)" : "N/A")</b>
+                        </RadzenText>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Third Agent" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text">
+                                            <b>@(_model.ThirdAgentSharePercentage > 0 ? $"{_model.ThirdAgentName} (% {(_model.ThirdAgentSharePercentage).ToString("00.00")}%)" : "N/A")</b>
+                        </RadzenText>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Extra Manager" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                            <b>@(_model.ExtraManagerName ?? "N/A")</b>
+                        </RadzenText>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+        </RadzenRow>
+
+
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="First Referral" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                            <b>@(_model.FirstReferralAgentName ?? "N/A")</b>
+                        </RadzenText>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Second Referral" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                            <b>@(_model.SecondReferralAgentName ?? "N/A")</b>
+                        </RadzenText>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Outside broker" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                            <b>@(_model.OutsideBrokerName ?? "N/A")</b>
+                        </RadzenText>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Is Corporate" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                            <b>@(_model.IsCorporate ? "Yes" : "No")</b>
+                        </RadzenText>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+            <RadzenColumn Size="12" SizeMD="12">
+                <RadzenFormField Text="Remarks" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                            <b>@(_model.Remarks ?? "N/A")</b>
+                        </RadzenText>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+        </RadzenRow>
+
+
+    </ChildContent>
+</RadzenFieldset>
+<RadzenFieldset AllowCollapse="true">
+    <HeaderTemplate>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+            <RadzenIcon Icon="account_box" class="titleSpan"/>
+            <b>
+                <span class="titleSpan">Processing Info</span>
+            </b>
+        </RadzenStack>
+    </HeaderTemplate>
+    <ChildContent>
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+            
+            
+            
+            
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Contract Confirm Date" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                            <b>@(_model.ConfirmedContractingDate == null ? "Not Yet" : _model.ConfirmedContractingDate.Value.ToString("dd MMMM, yyyy"))</b>
+                        </RadzenText>
+
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+              <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Contract Half Confirm Date" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                            <b>@(_model.ConfirmedHalfContractingDate == null ? _model.HalfConfirmed: _model.ConfirmedHalfContractingDate.Value.ToString("dd MMMM, yyyy"))</b>
+                        </RadzenText>
+
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            
+            
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Rec Reserve Date" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                            <b>@(_model.RecReserveDate == null ? "N/A" : _model.RecReserveDate.Value.ToString("dd MMMM, yyyy"))</b>
+                        </RadzenText>
+
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Rec Close Date" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                            <b>@(_model.RecCloseDate == null ? "N/A" : _model.RecCloseDate.Value.ToString("dd MMMM, yyyy"))</b>
+                        </RadzenText>
+
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            
+            
+            
+            
+      
+        </RadzenRow>
+
+         <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+               <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Last Conflict Date" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                            <b>@(_model.LastConflictDate == null ? "N/A" : _model.LastConflictDate.Value.ToString("dd MMMM, yyyy"))</b>
+                        </RadzenText>
+
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+              <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Last Reopen Date" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                            <b>@(_model.LastReopenDate == null ? "N/A" : _model.LastReopenDate.Value.ToString("dd MMMM, yyyy"))</b>
+                        </RadzenText>
+
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+       
+  <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Last Postpone Date" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                            <b>@(_model.LastPostponeDate == null ? "N/A" : _model.LastPostponeDate.Value.ToString("dd MMMM, yyyy"))</b>
+                        </RadzenText>
+
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+             <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Last Resolve Date" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                            <b>@(_model.LastResolveDate == null ? "N/A" : _model.LastResolveDate.Value.ToString("dd MMMM, yyyy"))</b>
+                        </RadzenText>
+
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+    
+    
+        </RadzenRow>
+         
+        
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+       
+        
+  <RadzenColumn Size="12" SizeMD="4">
+                <RadzenFormField Text="Last Developer Reviewing Date" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                            <b>@(_model.LastDeveloperReviewingDate == null ? "N/A" : _model.LastDeveloperReviewingDate.Value.ToString("dd MMMM, yyyy"))</b>
+                        </RadzenText>
+
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+             <RadzenColumn Size="12" SizeMD="4">
+                <RadzenFormField Text="Last Developer FeedBack Date" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                            <b>@(_model.LastDeveloperFeedBackDate == null ? "N/A" : _model.LastDeveloperFeedBackDate.Value.ToString("dd MMMM, yyyy"))</b>
+                        </RadzenText>
+
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+              
+              <RadzenColumn Size="12" SizeMD="4">
+                <RadzenFormField Text="Last Developer Feedback" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                            <b>@(_model.LastDeveloperFeedBack??"N/A")</b>
+                        </RadzenText>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+            </RadzenRow>
+             <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+       
+        
+  <RadzenColumn Size="12" SizeMD="4">
+                <RadzenFormField Text="Verification Date" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                            <b>@(_model.VerificationDate == null ? "N/A" : _model.VerificationDate.Value.ToString("dd MMMM, yyyy"))</b>
+                        </RadzenText>
+
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+             <RadzenColumn Size="12" SizeMD="4">
+                <RadzenFormField Text="Verification Status" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                            <b>@(_model.VerificationStatus?? "N/A")</b>
+                        </RadzenText>
+
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+              
+              <RadzenColumn Size="12" SizeMD="4">
+                <RadzenFormField Text="Verification Feedback" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                            <b>@(_model.VerificationComment??"N/A")</b>
+                        </RadzenText>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+            </RadzenRow>
+    </ChildContent>
+</RadzenFieldset>
+</ChildContent>
+</RadzenTabsItem>
+
+<RadzenTabsItem Text="Events">
+     <Template>
+
+      <span style="display: flex; gap: 6px">
+
+
+                    <b>Events</b>
+                    <RadzenSplitButton Variant="Variant.Filled" Shade="Shade.Light" Click="@(args => ApplyBulkAction(args))" Text="" Icon="build_circle" class="rz-splitbutton rz-buttonset" ButtonStyle="ButtonStyle.Secondary">
+                        <ChildContent>
+                            <RadzenSplitButtonItem Style="cursor: pointer" Visible="@_model.AllowedActions.Any(z => z ==  SystemPrivileges.PrimeTcrsAddEvent)" Icon="calendar_today" Text="Add Event" Value="5010">
+
+                            </RadzenSplitButtonItem>
+
+ 
+                             
+
+                        </ChildContent>
+                    </RadzenSplitButton>
+                </span>
+
+                </Template>
+           <ChildContent>
+
+    <RadzenFieldset AllowCollapse="false">
+
+        <ChildContent>
+            <div style="height: 400px; max-height: 500px; overflow-y: scroll;">
+                <RadzenDataList WrapItems="false" Style="width: 60%" AllowPaging="false" Data="@_systemEventItems" TItem="SystemEventItem">
+                    <Template Context="eventItem">
+
+
+                        <RadzenCard class="rz-my-12 rz-mx-auto" Style="width: 90%">
+                            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="0.2rem" class="rz-p-4">
+
+
+                                <RadzenImage Path="@eventItem.UserImagePath" Style="border-radius: 50%; height: 40px; width: 40px;" AlternateText="@(eventItem.FullName)" Attributes="@(_onImageError)"/>
+
+
+                                <RadzenStack Gap="0">
+                                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0">Created By</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Subtitle2">
+                                        <b>@($"{eventItem.FullName} - {eventItem.UserPositionName}")</b>
+                                    </RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0">Comment</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Subtitle2">
+                                        <b>@eventItem.EventComment</b>
+                                    </RadzenText>
+                                </RadzenStack>
+                            </RadzenStack>
+                            <RadzenCard class="rz-background-color-primary-light rz-shadow-0 rz-border-radius-0 rz-p-8" style="width: 95%;">
+                                <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-light">
+                                    <strong>Event Info</strong>
+                                </RadzenText>
+                                <RadzenRow RowGap="0">
+                                    <RadzenColumn SizeSM="3">
+                                        <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Creation Date</RadzenText>
+                                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light">
+                                            <b>@(eventItem.EventCreationDateTime.HasValue ? eventItem.EventCreationDateTime.Value.ToString("dd MMM, yyyy hh:mm tt") : "N/A")</b>
+                                        </RadzenText>
+                                    </RadzenColumn>
+                                    <RadzenColumn SizeSM="3">
+                                        <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Event Date</RadzenText>
+                                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light">
+                                            <b>@(eventItem.EventDateTime.HasValue ? eventItem.EventDateTime.Value.ToString("dd MMM, yyyy hh:mm tt") : "N/A")</b>
+                                        </RadzenText>
+                                    </RadzenColumn>
+                                    <RadzenColumn SizeSM="3">
+                                        <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Event Type</RadzenText>
+                                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light">
+                                            <b>@($"{eventItem.ContactingType} - {eventItem.EventType}")</b>
+                                        </RadzenText>
+                                    </RadzenColumn>
+                                    <RadzenColumn SizeSM="3">
+                                        <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Event Process</RadzenText>
+                                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light">
+                                            <b>@eventItem.EventProcess</b>
+                                        </RadzenText>
+                                    </RadzenColumn>
+                                </RadzenRow>
+                            </RadzenCard>
+
+                        </RadzenCard>
+
+
+                    </Template>
+                </RadzenDataList>
+
+
+            </div>
+
+        </ChildContent>
+    </RadzenFieldset>
+    </ChildContent>
+
+</RadzenTabsItem>
+
+<RadzenTabsItem Text="Attachments">
+   <Template>
+
+      <span style="display: flex; gap: 6px">
+
+
+                    <b>Attachments</b>
+                    <RadzenSplitButton Visible="@_model.AllowedActions.Any(z => z ==  SystemPrivileges.PrimeTcrsAddAttachments)"  Variant="Variant.Filled" Shade="Shade.Light" Click="@(args => ApplyBulkAction(args))" Text="" Icon="build_circle" class="rz-splitbutton rz-buttonset" ButtonStyle="ButtonStyle.Secondary">
+                        <ChildContent>
+                            <RadzenSplitButtonItem Visible="@_model.AllowedActions.Any(z => z ==  SystemPrivileges.PrimeTcrsAddAttachments)" Style="cursor: pointer" Icon="calendar_today" Text="Upload Attachment" Value="5011">
+                                @*  *@
+                            </RadzenSplitButtonItem>
+
+       
+
+                        </ChildContent>
+                    </RadzenSplitButton>
+                </span>
+
+                </Template>
+           <ChildContent>
+
+      <RadzenFieldset AllowCollapse="false">
+
+        <ChildContent>
+   
+    <RadzenDataGrid AllowColumnPicking="false" AllowColumnResize="true" AllowPickAllColumns="false" Style="min-width: 100px; overflow-x: auto; width: 99%;"
+                        Count="@_model.PrimeTcrAttachments.Length" ColumnWidth="50px"
+                        AllowAlternatingRows="true" AllowColumnReorder="false"
+                        AllowPaging="false"
+                        AllowFiltering="false"
+                        ColumnsPickerAllowFiltering="false"
+                         AllowSorting="false"
+                                Data="@_model.PrimeTcrAttachments" TItem="PrimeTcrAttachmentItem">
+            <Columns>
+                        <RadzenDataGridColumn Filterable="false" HeaderCssClass="datagrid-custom-header" Pickable="false" TItem="PrimeTcrAttachmentItem" Property="@nameof(PrimeTcrAttachmentItem.Id)" Title="Id" Sortable="false">
+</RadzenDataGridColumn>
+                        <RadzenDataGridColumn Filterable="false" HeaderCssClass="datagrid-custom-header" Pickable="false" TItem="PrimeTcrAttachmentItem" Property="@nameof(PrimeTcrAttachmentItem.UploadedBy)" Title="Uploaded By" Sortable="false">
+                        </RadzenDataGridColumn>
+                         <RadzenDataGridColumn Filterable="false" HeaderCssClass="datagrid-custom-header" Pickable="false" TItem="PrimeTcrAttachmentItem" Property="@nameof(PrimeTcrAttachmentItem.AttachmentDate)" Title="Uploading Date" Sortable="false">
+</RadzenDataGridColumn>
+ <RadzenDataGridColumn Filterable="false" HeaderCssClass="datagrid-custom-header" Pickable="false" TItem="PrimeTcrAttachmentItem" Property="@nameof(PrimeTcrAttachmentItem.OriginalFileName)" Title="File Name" Sortable="false">
+</RadzenDataGridColumn>
+                        <RadzenDataGridColumn Filterable="false" HeaderCssClass="datagrid-custom-header" Pickable="false" TItem="PrimeTcrAttachmentItem" Property="@nameof(PrimeTcrAttachmentItem.TcrAttachmentDescription)" Title="Description" Sortable="false">
+</RadzenDataGridColumn>
+                                <RadzenDataGridColumn Visible="@MainLayout.CurrentUser.Privileges.Any(z => z.Privilege ==  SystemPrivileges.PrimeTcrsCanDownloadAttachments)" Pickable="false" Filterable="false" Sortable="false" TItem="PrimeTcrAttachmentItem" HeaderCssClass="datagrid-custom-header" Property="" Title="Actions" Width="70px">
+                                    <Template Context="data">
+                                        <RadzenStack Orientation="Orientation.Vertical">
+                                            <RadzenButton ButtonStyle="ButtonStyle.Info" Disabled="false" Variant="Variant.Flat" Shade="Shade.Lighter" Icon="info" class="rz-m-1" Click="@(()=> GetFileStream(data.PrimeTcrId, data.Id,data.OriginalFileName))" Text="View" />
+
+
+                                        </RadzenStack>
+                                    </Template>
+                                </RadzenDataGridColumn>
+
+
+
+
+                 </Columns>
+                </RadzenDataGrid>
+</ChildContent>
+</RadzenFieldset>
+            </ChildContent>
+</RadzenTabsItem>
+
+<RadzenTabsItem Text="Commissions" Visible="@MainLayout.CurrentUser.Privileges.Any(z => z.Privilege ==  SystemPrivileges.PrimeTcrsCanAccessCommissionsTab)">
+    <Template>
+
+      <span style="display: flex; gap: 6px">
+
+
+                    <b>Commissions</b>
+                    <RadzenSplitButton Variant="Variant.Filled" Shade="Shade.Light" Click="@(args => ApplyBulkAction(args))" Text="" Icon="build_circle" class="rz-splitbutton rz-buttonset" ButtonStyle="ButtonStyle.Secondary">
+                        <ChildContent>
+                            <RadzenSplitButtonItem Style="cursor: pointer" Visible="@_model.AllowedActions.Any(z => z ==  SystemPrivileges.PrimeTcrsCanSetReviewing)" Icon="calendar_today" Text="Reviewing by Developer" Value="7031">
+
+                            </RadzenSplitButtonItem>
+
+                             
+
+                            <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Set Conflict" Visible="@_model.AllowedActions.Any(z => z == SystemPrivileges.PrimeTcrsCanSetConflict)" Value="7032" />
+                            <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Set Canceled By Developer" Visible="@_model.AllowedActions.Any(z => z == SystemPrivileges.PrimeTcrsCanSetCanceledByDeveloper)" Value="7049" />
+                            <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Set Postpone" Visible="@_model.AllowedActions.Any(z => z == SystemPrivileges.PrimeTcrsCanSetPostpone)" Value="7033" />
+                            <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Set Re-Open " Visible="@_model.AllowedActions.Any(z => z == SystemPrivileges.PrimeTcrsCanSetReopen)" Value="7034" />
+                            <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Update Creation Date" Visible="@_model.AllowedActions.Any(z => z == SystemPrivileges.PrimeTcrsCanUpdateCreationDate)" Value="7035" />
+
+                            <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Update Contract Confirmation Date" Visible="@_model.AllowedActions.Any(z => z == SystemPrivileges.PrimeTcrsCanUpdateConfirmationDate)" Value="7036" />
+
+                            <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Set Half Comm. Collected" Visible="@_model.AllowedActions.Any(z => z == SystemPrivileges.PrimeTcrsCanSetHalfCommissionCollected)" Value="7038" />
+
+                            <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Set Invoiced" Visible="@_model.AllowedActions.Any(z => z == SystemPrivileges.PrimeTcrsCanSetInvoiced)" Value="7039" />
+
+                            <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Set Confirmed Contract" Visible="@_model.AllowedActions.Any(z => z == SystemPrivileges.PrimeTcrsSetConfirmedContracted)" Value="7040" />
+
+
+                            <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Set Half Confirmed Contracted" Visible="@_model.AllowedActions.Any(z => z == SystemPrivileges.PrimeTcrsSetHalfConfirmedContracted)" Value="7045" />
+                         
+                                <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Set Confirmed  Reserved" Visible="@_model.AllowedActions.Any(z => z == SystemPrivileges.PrimeTcrsSetConfirmedReserved)" Value="7046" />
+
+                            <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Update Reservation Confirmation Date" Visible="@_model.AllowedActions.Any(z => z == SystemPrivileges.PrimeTcrsUpdateConfirmedReservedDate)" Value="7047" />
+
+                            <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Update Hlaf Contract Confirmation Date" Visible="@_model.AllowedActions.Any(z => z == SystemPrivileges.PrimeTcrsUpdateHalfConfirmedContracted)" Value="7048" />
+
+ 
+
+
+                        </ChildContent>
+                    </RadzenSplitButton>
+                </span>
+
+                </Template>
+           <ChildContent>
+                <RadzenFieldset AllowCollapse="true">
+                    <HeaderTemplate>
+                        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+                            <RadzenIcon Icon="account_box" class="titleSpan" />
+                            <b>
+                                <span class="titleSpan">Sales Agents</span>
+                            </b>
+                        </RadzenStack>
+                    </HeaderTemplate>
+                    <ChildContent>
+                        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+
+                            <RadzenColumn Size="12" SizeMD="6">
+                                <RadzenFormField Text="First Agent" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <ChildContent>
+                                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text">
+                                            <b>@(_model.FirstAgentSharePercentage > 0 ? $"{_model.FirstAgentName} (% {(_model.FirstAgentSharePercentage).ToString("00.00")}%)" : "N/A")</b>
+                                        </RadzenText>
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="6">
+                                <RadzenFormField Text="First Tree" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <ChildContent>
+                                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text">
+                                            <b>@(_model.FirstAgentTreeNames)</b>
+                                            <RadzenButton ButtonType="ButtonType.Button" Visible="_model.FirstAgentId>0" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Primary" Icon="update" Click="() => UpdateTree(_model.PrimeTcrId,_model.FirstAgentId)" Text="Update Tree" />
+                                        </RadzenText>
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+                            <RadzenColumn Size="12" SizeMD="6">
+                                <RadzenFormField Text="Second Agent" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <ChildContent>
+                                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text">
+                                            <b>@(_model.SecondAgentSharePercentage > 0 ? $"{_model.SecondAgentName} (% {(_model.SecondAgentSharePercentage).ToString("00.00")}%)" : "N/A")</b>
+                                        </RadzenText>
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="6">
+                                <RadzenFormField Text="Second Agent Tree" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <ChildContent>
+                                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text">
+                                            <b>@(_model.SecondAgentTreeNames?? "N/A")</b>
+                                            <RadzenButton ButtonType="ButtonType.Button" Visible="_model.SecondAgentId>0" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Primary" Icon="update" Click="() => UpdateTree(_model.PrimeTcrId,_model.SecondAgentId)" Text="Update Tree" />
+                                        </RadzenText>
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            </RadzenRow>
+                      
+                            
+                            <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+                            <RadzenColumn Size="12" SizeMD="6">
+                                <RadzenFormField Text="Third Agent" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <ChildContent>
+                                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text">
+                                            <b>@(_model.ThirdAgentSharePercentage > 0 ? $"{_model.ThirdAgentName} (% {(_model.ThirdAgentSharePercentage).ToString("00.00")}%)" : "N/A")</b>
+                                        </RadzenText>
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                               <RadzenColumn Size="12" SizeMD="6">
+                                <RadzenFormField Text="Third Agent Tree" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <ChildContent>
+                                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text">
+                                            <b>@(_model.ThirdAgentTreeNames?? "N/A")</b>
+                                            <RadzenButton ButtonType="ButtonType.Button" Visible="_model.ThirdAgentId>0" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Primary" Icon="update" Click="() => UpdateTree(_model.PrimeTcrId,_model.ThirdAgentId)" Text="Update Tree" />
+                                        </RadzenText>
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            </RadzenRow>
+                            </ChildContent>
+                            </RadzenFieldset>
+
+                <RadzenFieldset AllowCollapse="true">
+                    <HeaderTemplate>
+                        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+                            <RadzenIcon Icon="account_box" class="titleSpan" />
+                            <b>
+                                <span class="titleSpan">Referral Agents</span>
+                            </b>
+                        </RadzenStack>
+                    </HeaderTemplate>
+                    <ChildContent>
+
+
+                            <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+                            <RadzenColumn Size="12" SizeMD="6">
+                                <RadzenFormField Text="First Referral" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <ChildContent>
+                                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text">
+                                            <b>@(_model.FirstReferralAgentName ?? "N/A")</b>
+                                        </RadzenText>
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="6">
+                                <RadzenFormField Text="First Referral Tree" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <ChildContent>
+                                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text">
+                                            <b>@(_model.FirstReferralAgentTreeNames ?? "N/A")</b>
+                                            <RadzenButton ButtonType="ButtonType.Button" Visible="_model.FirstReferralAgentId>0" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Primary" Icon="update" Click="() => UpdateTree(_model.PrimeTcrId,_model.FirstReferralAgentId)" Text="Update Tree" />
+                                        </RadzenText>
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+</RadzenRow>
+
+                            <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+                                   <RadzenColumn Size="12" SizeMD="6">
+                                <RadzenFormField Text="Second Referral" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <ChildContent>
+                                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text">
+                                            <b>@(_model.SecondReferralAgentName ?? "N/A")</b>
+                                        </RadzenText>
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="6">
+                                <RadzenFormField Text="Second Referral Tree" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <ChildContent>
+                                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text">
+                                            <b>@(_model.SecondReferralAgentTreeNames ?? "N/A")</b>
+                                            <RadzenButton ButtonType="ButtonType.Button" Visible="_model.SecondReferralAgentId>0" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Primary" Icon="update" Click="() => UpdateTree(_model.PrimeTcrId,_model.SecondReferralAgentId)" Text="Update Tree" />
+                                        </RadzenText>
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+</RadzenRow>
+</ChildContent>
+</RadzenFieldset>
+                <RadzenFieldset AllowCollapse="true">
+                    <HeaderTemplate>
+                        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+                            <RadzenIcon Icon="account_box" class="titleSpan" />
+                            <b>
+                                <span class="titleSpan">Other Sales</span>
+                            </b>
+                        </RadzenStack>
+                    </HeaderTemplate>
+                    <ChildContent>
+
+                        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+                            <RadzenColumn Size="12" SizeMD="6">
+                                <RadzenFormField Text="Outside Broker Commission" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <ChildContent>
+                                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text">
+                                            <b>@(_model.OutsideBrokerName ?? "N/A")</b>
+                                        </RadzenText>
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="3">
+                                <RadzenFormField Text="Outside Broker Commission Percentage" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <ChildContent>
+                                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                            <b>@($"{_model.OutsideBrokerCommissionPercentage.ToString("00.00")}%")</b>
+                                        </RadzenText>
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="3">
+                                <RadzenFormField Text="Outside Broker Commission Value" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <ChildContent>
+                                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                            <b>@(_model.OutsideBrokerCommissionValue.ToString("##,###.##"))</b>
+                                        </RadzenText>
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+
+
+                        </RadzenRow>
+
+
+
+                        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+
+                            <RadzenColumn Size="12" SizeMD="6">
+                                <RadzenFormField Text="Extra Manager" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <ChildContent>
+                                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text">
+                                            <b>@(_model.ExtraManagerName ?? "N/A")</b>
+                                        </RadzenText>
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="6">
+                                <RadzenFormField Text="Telesales Agent" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <ChildContent>
+                                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text">
+                                            <b>@(_model.TeleSalesAgentName ?? "N/A")</b>
+                                        </RadzenText>
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+
+                            </RadzenRow>
+
+                              
+
+                    </ChildContent>
+                </RadzenFieldset>
+                </ChildContent>
+</RadzenTabsItem>
+
+
+        <RadzenTabsItem Text="Tcr Configs" Visible="@MainLayout.CurrentUser.Privileges.Any(z => z.Privilege ==  SystemPrivileges.PrimeTcrsCanAccessConfigsTab)">
+       <Template>
+
+      <span style="display: flex; gap: 6px">
+
+
+                    <b>Tcr Configs</b>
+                    <RadzenSplitButton Variant="Variant.Filled" Shade="Shade.Light" Click="@(args => ApplyBulkAction(args))" Text="" Icon="build_circle" class="rz-splitbutton rz-buttonset" ButtonStyle="ButtonStyle.Secondary">
+                        <ChildContent>
+                            <RadzenSplitButtonItem Style="cursor: pointer" Visible="@_model.AllowedActions.Any(z => z ==  SystemPrivileges.PrimeTcrsCanUpdateConfigsAndCommissions)" Icon="calendar_today" Text="Update Configs" Value="7041">
+
+                            </RadzenSplitButtonItem>
+
+                            <RadzenSplitButtonItem Style="cursor: pointer" Visible="@_model.AllowedActions.Any(z => z ==  SystemPrivileges.PrimeTcrsCanReloadCommissions)" Icon="calendar_today" Text="Reload Configs" Value="7043">
+
+                            </RadzenSplitButtonItem>
+                             
+                        </ChildContent>
+                    </RadzenSplitButton>
+                </span>
+
+                </Template>
+           <ChildContent>         
+    
+      <RadzenFieldset AllowCollapse="true">
+                    <HeaderTemplate>
+                        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+                            <RadzenIcon Icon="account_box" class="titleSpan" />
+                            <b>
+                                <span class="titleSpan">Commission Configs</span>
+                            </b>
+                        </RadzenStack>
+                    </HeaderTemplate>
+                    <ChildContent>
+
+                             <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+                           
+                             <RadzenColumn Size="12" SizeMD="3">
+                                <RadzenFormField Text="Force Achievement Box" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <Start>
+
+                                         &percnt;
+
+                                    </Start>
+                                    <ChildContent>
+                                        <RadzenNumeric style="display: block; width: 100%" @bind-Value="@(_model.TcrConfigs.ForceAchievementPercentage)" Name="ForceAchievementPercentage" />
+
+                                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="ForceAchievementPercentage" ComponentProperty="Value" />
+                                        
+
+
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="3">
+                                <RadzenFormField Text="Force Commission Box" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <Start>
+
+                                         &percnt;
+
+                                    </Start>
+                                    <ChildContent>
+                                        <RadzenNumeric style="display: block; width: 100%" @bind-Value="@(_model.TcrConfigs.ForceCommissionPercentage)" Name="ForceCommissionPercentage" />
+
+                                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="ForceCommissionPercentage" ComponentProperty="Value" />
+
+
+
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="3">
+                                <RadzenFormField Text="Forced Agent Incentive" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    
+                                    <ChildContent>
+                                        <RadzenNumeric style="display: block; width: 100%" @bind-Value="@(_model.TcrConfigs.ForcedAgentIncentiveValue)" Name="ForcedAgentIncentiveValue" />
+
+                                       
+
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="3">
+                                <RadzenFormField Text="Force Scaled Commission Per Million" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <Start>
+
+                                        &percnt;
+
+                                    </Start>
+                                    <ChildContent>
+                                        <RadzenNumeric style="display: block; width: 100%" @bind-Value="@(_model.TcrConfigs.ForcedScaledCommissionPercentage)" Name="ForcedScaledCommissionPercentage" />
+
+                                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="ForcedScaledCommissionPercentage" ComponentProperty="Value" />
+
+
+
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            
+                            
+                            
+                            
+                        </RadzenRow>
+
+                        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+                            
+                            
+                             
+                            <RadzenColumn Size="12" SizeMD="3">
+                                <RadzenFormField Text="Ignore Debited Incentive" Variant="Variant.Outlined" Style="width: 100%;">
+                                    <Start>
+                                        <RadzenCheckBox @bind-Value="@_model.TcrConfigs.IgnoreDebitedIncentive" Name="IgnoreDebitedIncentive"></RadzenCheckBox>
+
+                                    </Start>
+                                    <ChildContent>
+                                      
+
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="3">
+                                <RadzenFormField Text="Skip Incentive" Variant="Variant.Outlined" Style="width: 100%;">
+                                    <Start>
+                                        <RadzenCheckBox @bind-Value="@_model.TcrConfigs.SkipIncentive" Name="SkipIncentive"></RadzenCheckBox>
+
+                                    </Start>
+                                    <ChildContent>
+                                       
+
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+
+                            <RadzenColumn Size="12" SizeMD="3">
+                                <RadzenFormField Text="Ignore Debited Commission" Variant="Variant.Outlined" Style="width: 100%;">
+                                    <Start>
+                                        <RadzenCheckBox @bind-Value="@_model.TcrConfigs.IgnoreDebitedCommission" Name="IgnoreDebitedCommission"></RadzenCheckBox>
+
+                                    </Start>
+                                    <ChildContent>
+                                       
+
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="3">
+                                <RadzenFormField Text="Skip Half Commission Rules" Variant="Variant.Outlined" Style="width: 100%;">
+                                    <Start>
+                                        <RadzenCheckBox @bind-Value="@_model.TcrConfigs.SkipHalfCommissionRules" Name="SkipHalfCommissionRules"></RadzenCheckBox>
+
+
+                                    </Start>
+                                    <ChildContent>
+                                      
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+            
+                        </RadzenRow>
+
+                        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+                            
+                            
+                           
+
+                            <RadzenColumn Size="12" SizeMD="3">
+                                <RadzenFormField Text="Force Flat Rate Commission" Variant="Variant.Outlined" Style="width: 100%;">
+                                     <Start>
+                                        <RadzenCheckBox @bind-Value="@_model.TcrConfigs.ForceFlatRateCommission" Name="ForceFlatRateCommission"></RadzenCheckBox>
+
+                                         </Start>
+                                    <ChildContent>
+                                     
+
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="3">
+                                <RadzenFormField Text="Restrict Target Commission" Variant="Variant.Outlined" Style="width: 100%;">
+                                    <Start>
+                                        <RadzenCheckBox @bind-Value="@_model.TcrConfigs.RestrictTargetCommission" Name="RestrictTargetCommission"></RadzenCheckBox>
+
+
+                                    </Start>
+                                    <ChildContent>
+                                       
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="3">
+                                <RadzenFormField Text="Force Half Deal" Variant="Variant.Outlined" Style="width: 100%;">
+                                    <Start>
+                                        <RadzenCheckBox @bind-Value="@_model.TcrConfigs.ForceHalfDeal" Name="ForceHalfDeal"></RadzenCheckBox>
+
+
+                                    </Start>
+                                    <ChildContent>
+                                      
+
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="3">
+                                <RadzenFormField Text=" Selected in Report" Variant="Variant.Outlined" Style="width: 100%;">
+                                    <Start>
+                                        <RadzenCheckBox @bind-Value="@_model.TcrConfigs.TcrSelection" Name="TcrSelection"></RadzenCheckBox>
+
+                                    </Start>
+                                    <ChildContent>
+                                  
+
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+
+                        </RadzenRow>
+
+                        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+                            
+                            
+                           
+
+                            <RadzenColumn Size="12" SizeMD="4">
+                                <RadzenFormField Text=" Freeze Commission(Agents)" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <ChildContent>
+
+                                        <RadzenDropDown Name="FreezeCommissionAgentsIds" @bind-Value="@_model.TcrConfigs.FreezeCommissionAgentsIds" Data="@_model.TcrConfigs.AgentsList" Multiple="true" AllowClear="true" TextProperty="ItemName" ValueProperty="ItemId" Chips="true" Placeholder="Select Agent" Style="width: 100%;" />
+
+
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+        
+       <RadzenColumn Size="12" SizeMD="4">
+                                <RadzenFormField Text="Freeze Commission(Managers)" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <ChildContent>
+
+                                        <RadzenDropDown Name="FreezeCommissionManagersIds" @bind-Value="@_model.TcrConfigs.FreezeCommissionManagersIds" Data="@_model.TcrConfigs.AgentsList" Multiple="true" AllowClear="true" TextProperty="ItemName" ValueProperty="ItemId" Chips="true" Placeholder="Select Agent" Style="width: 100%;" />
+
+
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+        
+
+                                   <RadzenColumn Size="12" SizeMD="4">
+                                <RadzenFormField Text="Skip Resignation Rule" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <ChildContent>
+
+                                        <RadzenDropDown Name="ResignedRuleSkippedIds" @bind-Value="@_model.TcrConfigs.ResignedRuleSkippedIds" Data="@_model.TcrConfigs.AgentsList" Multiple="true" AllowClear="true" TextProperty="ItemName" ValueProperty="ItemId" Chips="true" Placeholder="Select Agent" Style="width: 100%;" />
+
+
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+        
+
+ 
+                       
+                        
+                        
+                        </RadzenRow>
+</ChildContent>
+</RadzenFieldset>
+    
+      <RadzenFieldset AllowCollapse="true">
+                    <HeaderTemplate>
+                        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+                            <RadzenIcon Icon="account_box" class="titleSpan" />
+                            <b>
+                                <span class="titleSpan">Project Configs</span>
+                            </b>
+                        </RadzenStack>
+                    </HeaderTemplate>
+                    <ChildContent>
+                    
+                        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+                            <RadzenColumn Size="12" SizeMD="3">
+                                <RadzenFormField Text="Normal Processing (Comm Paid after 2 months)" Variant="Variant.Outlined" Style="width: 100%;">
+                                    <Start>
+                                        <RadzenCheckBox @bind-Value="@_model.TcrConfigs.IsRegular" Name="IsRegular"></RadzenCheckBox>
+                                    </Start>
+                                    <ChildContent>
+                                           
+                                             
+ 
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="3">
+                                <RadzenFormField Text="Project Half Commission" Variant="Variant.Outlined" Style="width: 100%;">
+                                    <Start>
+                                        <RadzenCheckBox @bind-Value="@_model.TcrConfigs.IsHalfCommission" Name="IsHalfCommission"></RadzenCheckBox>
+
+                                    </Start>
+                                    <ChildContent>
+                                           
+ 
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="3">
+                                <RadzenFormField Text="Revenue Percentage" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <Start>
+
+                                         &percnt;
+
+                                    </Start>
+                                    <ChildContent>
+                                        <RadzenNumeric style="display: block; width: 100%" @bind-Value="@(_model.TcrConfigs.CompanyCommissionPercentage)" Name="CompanyCommissionPercentage" />
+
+                                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="CompanyCommissionPercentage" ComponentProperty="Value" />
+                                        
+
+
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="3">
+                                <RadzenFormField Text="Tax Percentage" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <Start>
+
+                                         &percnt;
+
+                                    </Start>
+                                    <ChildContent>
+                                        <RadzenNumeric style="display: block; width: 100%" @bind-Value="@(_model.TcrConfigs.TaxPercentage)" Name="TaxPercentage" />
+
+                                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="TaxPercentage" ComponentProperty="Value" />
+
+
+
+                                    </ChildContent>
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+
+                        </RadzenRow>
+
+                        
+                        
+                         
+                         
+                      
+</ChildContent>
+</RadzenFieldset>
+     
+    </ChildContent>
+    
+    
+
+</RadzenTabsItem>
+
+
+        <RadzenTabsItem Text="Payments"  Visible="@MainLayout.CurrentUser.Privileges.Any(z => z.Privilege ==  SystemPrivileges.PrimeTcrsCanAccessPaymentsTab)">
+            <Template>
+
+                <span style="display: flex; gap: 6px">
+
+
+                    <b>Payments</b>
+                    <RadzenSplitButton Visible="@_model.AllowedActions.Any(z => z ==  SystemPrivileges.PrimeTcrsCanAddPayments)" Variant="Variant.Filled" Shade="Shade.Light" Click="@(args => ApplyBulkAction(args))" Text="" Icon="build_circle" class="rz-splitbutton rz-buttonset" ButtonStyle="ButtonStyle.Secondary">
+                        <ChildContent>
+                            <RadzenSplitButtonItem Style="cursor: pointer" Visible="@_model.AllowedActions.Any(z => z ==  SystemPrivileges.PrimeTcrsCanAddPayments)" Icon="calendar_today" Text="Add Payment" Value="5011">
+
+                            </RadzenSplitButtonItem>
+
+
+
+                        </ChildContent>
+                    </RadzenSplitButton>
+                </span>
+
+            </Template>
+            <ChildContent>
+
+                <RadzenFieldset AllowCollapse="false">
+
+                    <ChildContent>
+
+                   @*      <RadzenDataGrid AllowColumnPicking="false" AllowColumnResize="true" AllowPickAllColumns="false" Style="min-width: 100px; overflow-x: auto; width: 99%;"
+                                        Count="@_model.PrimeTcrAttachments.Length" ColumnWidth="50px"
+                                        AllowAlternatingRows="true" AllowColumnReorder="false"
+                                        AllowPaging="false"
+                                        AllowFiltering="false"
+                                        ColumnsPickerAllowFiltering="false"
+                                        AllowSorting="false"
+                                        Data="@_model.PrimeTcrAttachments" TItem="PrimeTcrAttachmentItem">
+                            <Columns>
+                                <RadzenDataGridColumn Filterable="false" HeaderCssClass="datagrid-custom-header" Pickable="false" TItem="PrimeTcrAttachmentItem" Property="@nameof(PrimeTcrAttachmentItem.Id)" Title="Id" Sortable="false">
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn Filterable="false" HeaderCssClass="datagrid-custom-header" Pickable="false" TItem="PrimeTcrAttachmentItem" Property="@nameof(PrimeTcrAttachmentItem.UploadedBy)" Title="Uploaded By" Sortable="false">
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn Filterable="false" HeaderCssClass="datagrid-custom-header" Pickable="false" TItem="PrimeTcrAttachmentItem" Property="@nameof(PrimeTcrAttachmentItem.AttachmentDate)" Title="Uploading Date" Sortable="false">
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn Filterable="false" HeaderCssClass="datagrid-custom-header" Pickable="false" TItem="PrimeTcrAttachmentItem" Property="@nameof(PrimeTcrAttachmentItem.OriginalFileName)" Title="File Name" Sortable="false">
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn Filterable="false" HeaderCssClass="datagrid-custom-header" Pickable="false" TItem="PrimeTcrAttachmentItem" Property="@nameof(PrimeTcrAttachmentItem.TcrAttachmentDescription)" Title="Description" Sortable="false">
+                                </RadzenDataGridColumn>
+                            </Columns>
+                        </RadzenDataGrid> *@
+                    </ChildContent>
+                </RadzenFieldset>
+            </ChildContent>
+        </RadzenTabsItem>
+
+
+
+</Tabs>
+</RadzenTabs>
+
+<script language="javascript" type="text/javascript">
+
+    window.downloadFileFromStream = async (fileName, contentStreamReference) => {
+        const arrayBuffer = await contentStreamReference.arrayBuffer();
+        const blob = new Blob([arrayBuffer]);
+        const url = URL.createObjectURL(blob);
+        const anchorElement = document.createElement('a');
+        anchorElement.href = url;
+        anchorElement.download = fileName ?? '';
+        anchorElement.click();
+        anchorElement.remove();
+        URL.revokeObjectURL(url);
+    }
+</script>
+

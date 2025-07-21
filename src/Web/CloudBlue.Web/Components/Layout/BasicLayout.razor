@@ -1,0 +1,75 @@
+﻿@inherits LayoutComponentBase
+
+<RadzenComponents/>
+<Spinners></Spinners>
+<RadzenDialog/>
+<BlazoredToasts Position="ToastPosition.BottomLeft"
+                Timeout="5"
+                ErrorIcon="Error"
+                InfoIcon="Information"
+                IconType="IconType.FontAwesome"
+                SuccessClass=""
+                SuccessIcon="Success"
+                WarningIcon="Warning">
+</BlazoredToasts>
+<RadzenNotification/>
+<CascadingValue Value="this">
+
+
+    <RadzenLayout style="background-color: transparent !important; grid-template-areas: 'rz-sidebar rz-header' 'rz-sidebar rz-body'; width: 1240px;">
+        <RadzenHeader Style="background-color: transparent !important">
+            <RadzenRow Style="margin-bottom: 0px !important; margin-top: 3px !important" JustifyContent="JustifyContent.Start" AlignItems="AlignItems.Center" Gap="0">
+                <RadzenColumn Size="12" SizeMD="4">
+                    <RadzenRow Style="margin-bottom: 0px !important; margin-left: 20px !important; margin-top: 3px !important;" JustifyContent="JustifyContent.Normal" AlignItems="AlignItems.Normal" Gap="0">
+
+                        <RadzenLink Path="/" Text="Home">
+                            <RadzenImage Path="images/HeaderLogo.png" style="height: 80px; width: 80px;">
+                            </RadzenImage>
+                        </RadzenLink>
+                    </RadzenRow>
+                </RadzenColumn>
+
+
+                <RadzenColumn Size="12" SizeMD="4">
+                    <RadzenRow Style="margin-bottom: 0px !important; margin-top: 3px !important" JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center" Gap="0">
+
+
+                    </RadzenRow>
+                    <RadzenRow Style="margin-bottom: 0px !important; margin-top: 2px !important" JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center" Gap="0">
+
+
+                    </RadzenRow>
+                </RadzenColumn>
+
+                <RadzenColumn Size="12" SizeMD="4">
+                    <RadzenRow Style="margin-bottom: 0px !important; margin-right: 20px !important; margin-top: 3px !important;" JustifyContent="JustifyContent.Right" AlignItems="AlignItems.End" Gap="0">
+
+                    </RadzenRow>
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow JustifyContent="JustifyContent.Left" Style="margin-top: 2px !important; padding-left: 10px !important; padding-right: 10px !important;">
+
+
+                <RadzenColumn Size="12" SizeMD="12">
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenHeader>
+        <RadzenBody Style="background-color: transparent !important">
+            <RadzenRow Visible="true" class="rz-mx-auto rz-px-4 rz-pt-2 rz-pt-md-4 rz-pt-lg-6 rz-pt-xl-12 rz-pb-2 rz-pb-lg-12" Style="max-width: 1250px;">
+                <RadzenColumn Size="12">
+                    @Body
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenBody>
+
+
+    </RadzenLayout>
+
+</CascadingValue>
+
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>

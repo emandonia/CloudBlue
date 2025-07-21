@@ -1,0 +1,84 @@
+@page "/add-user-position"
+
+<PageTitle>Add UserPosition</PageTitle>
+    <RadzenColumn SizeMD=12>
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save UserPosition</RadzenAlert>
+        <RadzenTemplateForm TItem="NewCloudBlueMirror.Models.CloudBlue.UserPosition" Data="@userPosition" Visible="@(userPosition != null && canEdit)" Submit="@FormSubmit">
+          <RadzenStack>
+            <RadzenFormField Text="Id" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@userPosition.Id" Name="Id" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="Id" Text="Id is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="User Position Name" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@userPosition.UserPositionName" Name="UserPositionName" />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenFormField Text="Position Order" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@userPosition.PositionOrder" Name="PositionOrder" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="PositionOrder" Text="PositionOrder is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Apply Targets" Component="ApplyTargets" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@userPosition.ApplyTargets" Name="ApplyTargets" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Is Manager" Component="IsManager" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@userPosition.IsManager" Name="IsManager" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Can Have Team" Component="CanHaveTeam" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@userPosition.CanHaveTeam" Name="CanHaveTeam" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenFormField Text="Department Id" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@userPosition.DepartmentId" Name="DepartmentId" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="DepartmentId" Text="DepartmentId is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="User Group Id" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@userPosition.UserGroupId" Name="UserGroupId" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="UserGroupId" Text="UserGroupId is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Has Line Of Business" Component="HasLineOfBusiness" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@userPosition.HasLineOfBusiness" Name="HasLineOfBusiness" />
+                </RadzenColumn>
+            </RadzenRow>
+          </RadzenStack>
+          <RadzenStack style="margin-top:1rem;" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick"  />
+          </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+

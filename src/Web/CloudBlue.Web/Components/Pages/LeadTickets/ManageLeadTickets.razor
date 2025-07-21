@@ -1,0 +1,977 @@
+@page "/lead-tickets/manage"
+@page "/lead-tickets/manage/{mode:long?}"
+@using CloudBlue.Domain.DomainModels.CallLeads
+@using CloudBlue.Domain.DomainModels.Filtration.Interfaces
+@using CloudBlue.Domain.Enums
+@using CloudBlue.Domain.GenericTypes
+@inject IJSRuntime JSRuntime;
+
+<style>
+ /*     .rz-grid-table { width: auto !important; }
+  */
+    .rz-grid-table td .rz-cell-data {
+        overflow-wrap: break-word;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
+
+
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 20px;
+    }
+
+    /* #SearchButton, */
+    #toBottom {
+        position: fixed;
+        right: 30px;
+        z-index: 99;
+        font-size: 18px;
+        border: none;
+        outline: none;
+        background-color: red;
+        color: white;
+        cursor: pointer;
+        padding: 15px;
+        border-radius: 4px;
+    }
+    /*
+    #toBottom { top    : 20px; }
+    #toTop    { bottom : 20px; }
+    */
+    #toBottom {
+        top: calc( 50vh - 60px );
+    }
+
+    #toTop {
+        top: calc( 50vh + 4px );
+    }
+
+        #toTop:hover,
+        #toBottom:hover {
+            background-color: #555;
+        }
+
+    .noDisplay {
+        display: none;
+    }
+
+</style>
+<RadzenColumn SizeMD="12">
+
+<RadzenStack>
+
+<RadzenTemplateForm TItem="LeadTicketsFiltersModel" Data="@_leadsFilters">
+
+
+<RadzenPanel AllowCollapse="true" class="rz-my-10 rz-mx-auto">
+<HeaderTemplate>
+    <RadzenText TextStyle="TextStyle.H6" class="rz-display-flex rz-align-items-center rz-m-0">
+        <RadzenIcon Icon="filter_alt" class="rz-me-1"/><b>Filters</b>
+    </RadzenText>
+</HeaderTemplate>
+
+<ChildContent>
+    
+
+@* Client Filters *@
+
+<RadzenFieldset AllowCollapse="true">
+    <HeaderTemplate>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+            <RadzenIcon Icon="filter" class="titleSpan"/>
+            <b>
+                <span class="titleSpan">Client Filters</span>
+            </b>
+        </RadzenStack>
+    </HeaderTemplate>
+    <ChildContent>
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Client Name" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@_leadsFilters.ClientName" Name="ClientName"/>
+
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+
+                <RadzenFormField Text="Client Name (Arabic)" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@_leadsFilters.ClientNameArabic" Name="ClientNameArabic"/>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="Client Category" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenDropDown AllowClear="true" Name="ClientCategoryId" @bind-Value="@_leadsFilters.ClientCategoryId" Data="@_clientCategories" TextProperty="ItemName" ValueProperty="ItemId" Placeholder="Select Client Category" Style="width: 100%;"/>
+
+
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+        </RadzenRow>
+
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+            <RadzenColumn Size="12" SizeMD="2">
+                <RadzenFormField Variant="Variant.Outlined" Text="Country Code">
+
+                    <RadzenDropDown AllowClear="true" Name="CountryId" @bind-Value="@ClientContactDevice.CountryId" Data="@_countries" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Country" Style="width: 100%;">
+                        <Template Context="newcontext">
+                            @{
+                                var val = newcontext as LookupItem<int>;
+                            }
+                            <span>@($"({val.ExtraId}) {val.ItemName}")</span>
+                                         
+                        </Template> 
+                    </RadzenDropDown>
+
+
+                </RadzenFormField>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="2">
+
+                <RadzenFormField Text="Area Code" Variant="Variant.Outlined">
+                    <RadzenTextBox MaxLength="4" onkeypress="allowOnlyNumbers(event)"
+                                   oninput="applyChange(4)" Name="AreaCode" @bind-Value="@ClientContactDevice.PhoneAreaCode" />
+
+
+                </RadzenFormField>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="2">
+
+                <RadzenFormField Text="Phone" Variant="Variant.Outlined">
+                    <RadzenTextBox Name="Phone" oninput="applyChange(8)"
+                                   onkeypress="allowOnlyNumbers(event)"
+                                   MaxLength="8" @bind-Value="@ClientContactDevice.Phone"/>
+
+
+                </RadzenFormField>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Internl. Numbers" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <RadzenDropDown AllowClear="true" Name="InternationalOnly" Data="@_internationalNoOptions" TextProperty="ItemName" ValueProperty="ItemId" @bind-Value="@_leadsFilters.InternationalOnly" Style="width: 100%;"/>
+
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Country Phone Code" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <RadzenDropDown AllowClear="true" Name="CountryCode" Data="@_countries" TextProperty="ItemName" ValueProperty="ExtraId" @bind-Value="@_leadsFilters.CountryCode"
+                                    AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                    Style="width: 100%;"/>
+
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+        </RadzenRow>
+
+
+    </ChildContent>
+</RadzenFieldset>
+
+@* Lead Source Filters *@
+<RadzenFieldset AllowCollapse="true">
+    <HeaderTemplate>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+            <RadzenIcon Icon="filter" class="titleSpan"/>
+            <b>
+                <span class="titleSpan">Lead Source Filters</span>
+            </b>
+        </RadzenStack>
+    </HeaderTemplate>
+
+
+    <ChildContent>
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="Lead Source" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <RadzenDropDown AllowClear="true" Name="LeadSourceId" @bind-Value="@_leadsFilters.LeadSourceId" Data="@_leadSources" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Lead Source" Style="width: 100%;"/>
+
+
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+
+                <RadzenFormField Text="How did You Hear About us?" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenDropDown AllowClear="true" Change="KnowSourceChanged"
+                                    Name="KnowSourceId" @bind-Value="@_leadsFilters.KnowSourceId" Data="@_knowItems" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Know Item" Style="width: 100%;"/>
+                </RadzenFormField>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="How did You Hear About us more?" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <RadzenDropDown AllowClear="true" Name="KnowSubSourceId" @bind-Value="@_leadsFilters.KnowSubSourceId" Data="@_knowSubItems" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Know Sub Item" Style="width: 100%;"/>
+                </RadzenFormField>
+            </RadzenColumn>
+
+        </RadzenRow>
+
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="Marketing Agency" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <RadzenDropDown AllowClear="true" Name="AgencyId" @bind-Value="@_leadsFilters.AgencyId" Data="@_agencies" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Marketing Agency" Style="width: 100%;"/>
+
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="Digital Form" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@_leadsFilters.FormName" Name="FormName"/>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+        </RadzenRow>
+
+
+    </ChildContent>
+</RadzenFieldset>
+
+@* Basic Filters *@
+<RadzenFieldset AllowCollapse="true">
+<HeaderTemplate>
+    <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+        <RadzenIcon Icon="filter" class="titleSpan"/>
+        <b>
+            <span class="titleSpan">Basic Filters</span>
+        </b>
+    </RadzenStack>
+</HeaderTemplate>
+<ChildContent>
+
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenFormField Text="Lead Ticket Ids" Variant="Variant.Outlined" Style="width: 100%;">
+            <RadzenTextBox style="display: block; width: 100%" @bind-Value="@_leadsFilters.EntityIds" Name="EntityIds"/>
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3">
+
+        <RadzenFormField Text="Creation Date (From)" Variant="Variant.Outlined" Style="width: 100%;">
+                                        <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_leadsFilters.EntityCreationDateFrom" Name="EntityCreationDateFrom" />
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3">
+
+        <RadzenFormField Text="Creation Date (To)" Variant="Variant.Outlined" Style="width: 100%;">
+                                        <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_leadsFilters.EntityCreationDateTo" Name="EntityCreationDateTo" />
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+</RadzenRow>
+
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenFormField Text="Sales Type" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Change="SalesTypeChanged" Name="SalesTypeId" @bind-Value="@_leadsFilters.SalesTypeId" Data="@_salesTypes" TextProperty="ItemName" ValueProperty="ItemId" Placeholder="Select Sales Type" Style="width: 100%;"/>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenFormField Text="Service" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="ServiceId" @bind-Value="@_leadsFilters.ServiceId" Data="@_services" TextProperty="ItemName" ValueProperty="ItemId" Placeholder="Select Service" Style="width: 100%;"/>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+
+</RadzenRow>
+
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenFormField Text="Usage" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true"
+                            Name="UsageId" @bind-Value="@_leadsFilters.UsageId" Data="@_usages" TextProperty="ItemName" ValueProperty="ItemId" Change="@UsageChanged" Placeholder="Select Usage" Style="width: 100%;"/>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenFormField Text="Property Type" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="PropertyTypeId" @bind-Value="@_leadsFilters.PropertyTypeId" Data="@_propertyTypes" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Property Type" Style="width: 100%;"/>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+
+</RadzenRow>
+
+
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+
+    <RadzenColumn Size="12" SizeMD="3">
+        <RadzenFormField Text="Country" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="CountryId" Change="CountryChanged" @bind-Value="@_leadsFilters.CountryId" Data="@_countries" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Country" Style="width: 100%;"/>
+
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3">
+        <RadzenFormField Text="City" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="CityId" @bind-Value="@_leadsFilters.CityId" Data="@_cities" Change="CityChanged" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select City" Style="width: 100%;"/>
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+
+    <RadzenColumn Size="12" SizeMD="3">
+        <RadzenFormField Text="District" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Change="DistrictChanged" Name="DistrictId" @bind-Value="@_leadsFilters.DistrictId" Data="@_districts" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select District" Style="width: 100%;"/>
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3">
+        <RadzenFormField Text="Neighborhood" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="NeighborhoodId" @bind-Value="@_leadsFilters.NeighborhoodId" Data="@_neighborhoods" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Neighborhood" Style="width: 100%;"/>
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+
+
+</RadzenRow>
+
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenFormField Text="Company" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="CompanyId" @bind-Value="@_leadsFilters.CompanyId" Data="@_companies" Change="@PopulateAgents" TextProperty="ItemName" ValueProperty="ItemId" Placeholder="Select Company" Style="width: 100%;"/>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenFormField Text="Top Managers" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="_topManagerId" @bind-Value="@_leadsFilters.TopManagerId" Data="@_topManagers" Change="@PopulateAgents" TextProperty="ItemName" ValueProperty="ItemId" Placeholder="Select Top Manager" Style="width: 100%;" />
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+
+</RadzenRow>
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenFormField Text="Salespersons Category" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="SalesPersonClassId" @bind-Value="@_leadsFilters.SalesPersonClassId" Data="@_salesClasses" Change="@PopulateAgents" TextProperty="ItemName" ValueProperty="ItemId" Placeholder="Select Salespersons Category" Style="width: 100%;" />
+        </RadzenFormField>
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Sales Person(s)" Variant="Variant.Outlined" Style="width: 100%;">
+
+
+            <RadzenDropDown  Name="AgentIds" @bind-Value="@_leadsFilters.AgentIdsList" Data="@_agents" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" Multiple="true" Chips="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Agent(s)" AllowClear="true" Style="width: 100%;">
+                <Template Context="newContext">
+                    @{
+                        var val = newContext as LookupItem<int>;
+                    }
+                    <RadzenIcon MouseEnter="@(args => ShowTooltip(args, val.ExtraId))" class="@($"li{val.ExtraId}Icon")">
+
+                    </RadzenIcon>
+                    <b>
+                        <span>@($"{val.ItemName} ({val.ItemId})")</span>
+                    </b>
+                </Template>
+            </RadzenDropDown>
+
+
+        </RadzenFormField>
+    </RadzenColumn>
+
+    <RadzenColumn Size="12" SizeMD="2">
+        <RadzenFormField Text="Tree" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenToggleButton @bind-Value="@_leadsFilters.AgentsRecursive" ButtonStyle="ButtonStyle.Light"
+                                ToggleButtonStyle="ButtonStyle.Light">
+                <RadzenBadge BadgeStyle="@(_leadsFilters.AgentsRecursive ? BadgeStyle.Info : BadgeStyle.Danger)" Text="@(_leadsFilters.AgentsRecursive ? "ON" : "OFF")" Shade="Shade.Lighter"/>
+
+            </RadzenToggleButton>
+
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+</RadzenRow>
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenFormField Text="Archived" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="ArchivedId" @bind-Value="@_leadsFilters.ArchivedId" Data="@_archivingList" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Archiving Status" Style="width: 100%;"/>
+
+        </RadzenFormField>
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="2">
+        <RadzenFormField Text="Budget From" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenNumeric Name="BudgetFrom" @bind-Value="@_leadsFilters.BudgetFrom"></RadzenNumeric>
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="2">
+        <RadzenFormField Text="Budget To" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenNumeric Name="BudgetTo" @bind-Value="@_leadsFilters.BudgetTo"></RadzenNumeric>
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="2">
+        <RadzenFormField Text="Currency" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="CurrencyId" @bind-Value="@_leadsFilters.CurrencyId" Data="@_currencies" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Currency" Style="width: 100%;"/>
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+</RadzenRow>
+</ChildContent>
+</RadzenFieldset>
+
+
+@* Advanced Filters *@
+<RadzenFieldset AllowCollapse="true">
+    <HeaderTemplate>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+            <RadzenIcon Icon="filter" class="titleSpan"/>
+            <b>
+                <span class="titleSpan">Advanced Filters</span>
+            </b>
+        </RadzenStack>
+    </HeaderTemplate>
+    <ChildContent>
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+            <RadzenColumn Size="12" SizeMD="3">
+
+                <RadzenFormField Text="Assigning Date (From)" Variant="Variant.Outlined" Style="width: 100%;">
+                                        <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_leadsFilters.EntityAssignDateFrom" Name="EntityAssignDateFrom" />
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+
+                <RadzenFormField Text="Assigning Date (To)" Variant="Variant.Outlined" Style="width: 100%;">
+                                        <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_leadsFilters.EntityAssignDateTo" Name="EntityAssignDateTo" />
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+
+                <RadzenFormField Text="Last Activity Date (From)" Variant="Variant.Outlined" Style="width: 100%;">
+                                        <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_leadsFilters.AgentLastActivityDateFrom" Name="AgentLastActivityDateFrom" />
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+
+                <RadzenFormField Text="Last Activity Date (To)" Variant="Variant.Outlined" Style="width: 100%;">
+                                        <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_leadsFilters.AgentLastActivityDateTo" Name="AgentLastActivityDateTo" />
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+        </RadzenRow>
+
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Status" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <RadzenDropDown Name="EntityStatusIds" Change="StatusChanged" @bind-Value="@_leadsFilters.EntityStatusIds" Data="@_leadStatuses" Multiple="true" AllowClear="true" TextProperty="ItemName" ValueProperty="ItemId" Chips="true" Placeholder="Select Status" Style="width: 100%;"/>
+                </RadzenFormField>
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Grace Period" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <RadzenDropDown AllowClear="true" Name="ExtremeHours" Disabled="@_disableExtremeHours" @bind-Value="@_leadsFilters.ExtremeHoursFromList" Data="@_gracePeriods" TextProperty="ItemName" ValueProperty="ItemId" Placeholder="Select Grace Period" Style="width: 45% !important;"/>
+                    <RadzenNumeric Visible="@(!_disableExtremeHours && _leadsFilters.ExtremeHoursFromList == 1000000)" style="display: block; width: 45% !important" @bind-Value="@_leadsFilters.ExtremeHours" Name="ClientName"/>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenFormField Text="Agent Feedback" Variant="Variant.Outlined" Style="width: 100%;">
+
+
+                                        <RadzenDropDown Name="FeedbackIds" Data="@_feedbackItems" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" @bind-Value="@_leadsFilters.FeedbackIds" Multiple="true" Chips="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Feedback" AllowClear="true" Style="width: 100%;">
+
+                    </RadzenDropDown>
+
+
+                </RadzenFormField>
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="2">
+                <RadzenFormField Text="Last Only" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <RadzenToggleButton @bind-Value="@_leadsFilters.LastFeedbackOnly" ButtonStyle="ButtonStyle.Light"
+                                        ToggleButtonStyle="ButtonStyle.Light">
+                        <RadzenBadge BadgeStyle="@(_leadsFilters.LastFeedbackOnly ? BadgeStyle.Info : BadgeStyle.Danger)" Text="@(_leadsFilters.LastFeedbackOnly ? "ON" : "OFF")" Shade="Shade.Lighter"/>
+
+                    </RadzenToggleButton>
+
+
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+        </RadzenRow>
+
+
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+            <RadzenColumn Size="12" SizeMD="3">
+
+                <RadzenFormField Text="Assigning Type" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <RadzenDropDown AllowClear="true" Name="AssigningTypeId" @bind-Value="@_leadsFilters.AssigningTypeId" Data="@_assigningTypes" TextProperty="ItemName" ValueProperty="ItemId" Placeholder="Select Assigning Type" Style="width: 100%;"/>
+                </RadzenFormField>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Pending Activities" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    <RadzenDropDown AllowClear="true" Name="PendingActivityId" @bind-Value="@_leadsFilters.PendingActivityId" Data="@_pendingActivitiesList" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Pending Activity" Style="width: 100%;"/>
+
+                </RadzenFormField>
+            </RadzenColumn>
+
+                                <RadzenColumn Size="12" SizeMD="3">
+
+                                    <RadzenFormField Text="Agent Resign Date (From)" Variant="Variant.Outlined" Style="width: 100%;">
+                                        <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_leadsFilters.AgentResignDateFrom" Name="AgentResignDateFrom" />
+                                    </RadzenFormField>
+
+
+                                </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="3">
+
+                                    <RadzenFormField Text="Agent Resign Date (To)" Variant="Variant.Outlined" Style="width: 100%;">
+                                        <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_leadsFilters.AgentResignDateTo" Name="AgentResignDateTo" />
+                                    </RadzenFormField>
+
+
+                                </RadzenColumn>
+
+        </RadzenRow>
+
+
+    </ChildContent>
+</RadzenFieldset>
+
+                    <RadzenButton ButtonType="ButtonType.Submit" Id="SearchButton" Shade="Shade.Lighter" Click="@Search" Text="Search" ButtonStyle="ButtonStyle.Secondary" />
+
+
+                    <RadzenButton Shade="Shade.Lighter" Click="@ResetFilters" Text="Reset Filters" ButtonStyle="ButtonStyle.Primary" />
+                  
+</ChildContent>
+</RadzenPanel>
+
+            
+
+</RadzenTemplateForm>
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+<RadzenColumn Size="12" SizeMD="12">
+
+<RadzenButton Text="Reset Grid" Click="@(args => { _grid.Reset(); })" class="rz-my-4"/>
+
+
+<RadzenSplitButton Variant="Variant.Filled" Shade="Shade.Light" Click="@(args => ApplyBulkAction(args))" Text="Bulk Actions" class="rz-splitbutton rz-buttonset" ButtonStyle="ButtonStyle.Secondary">
+    <ChildContent>
+       @*  <RadzenSplitButtonItem Style="cursor: pointer" Visible="@Layout.CurrentUser.Privileges.Any(z => z.Privilege == SystemPrivileges.LeadTicketsAddEvent)" Icon="calendar_today" Text="Add Feedback" Value="51">
+
+        </RadzenSplitButtonItem> *@
+
+                        <RadzenSplitButtonItem Style="cursor: pointer" Visible="@Layout.CurrentUser.Privileges.Any(z => z.Privilege == SystemPrivileges.LeadTicketsExport)" Icon="calendar_today" Text="Export" Value="44">
+
+                        </RadzenSplitButtonItem>
+
+        <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Assign to Agent" Visible="@Layout.CurrentUser.Privileges.Any(z => z.Privilege == SystemPrivileges.LeadTicketsAssignToAgent)" Value="45"/>
+
+        <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_return" Text="Re-Assign to Agent" Visible="@Layout.CurrentUser.Privileges.Any(z => z.Privilege == SystemPrivileges.LeadTicketsReAssignToAgent)" Value="46"/>
+
+        @* 
+        <RadzenSplitButtonItem Style="cursor: pointer" Visible="@Layout.CurrentUser.Privileges.Any(z => z.Privilege == SystemPrivileges.LeadTicketsAssignToBranch)" Icon="calendar_today" Text="Assign to Branch" Value="47"/>
+
+
+        <RadzenSplitButtonItem Style="cursor: pointer" Visible="@Layout.CurrentUser.Privileges.Any(z => z.Privilege == SystemPrivileges.LeadTicketsReAssignToBranch)" Icon="calendar_today" Text="Re-Assign to Branch" Value="48"/>
+ *@
+
+        <RadzenSplitButtonItem Style="cursor: pointer" Visible="@Layout.CurrentUser.Privileges.Any(z => z.Privilege == SystemPrivileges.LeadTicketsReject)" Icon="calendar_today" Text="Reject" Value="59"/>
+
+
+        <RadzenSplitButtonItem Style="cursor: pointer" Visible="@Layout.CurrentUser.Privileges.Any(z => z.Privilege == SystemPrivileges.LeadTicketsSetVoid)" Icon="calendar_today" Text="Set Void" Value="60"/>
+
+
+        <RadzenSplitButtonItem Style="cursor: pointer" Visible="@Layout.CurrentUser.Privileges.Any(z => z.Privilege == SystemPrivileges.LeadTicketsUnArchive)" Icon="calendar_today" Text="UnArchive" Value="54"/>
+
+
+        <RadzenSplitButtonItem Style="cursor: pointer" Visible="@Layout.CurrentUser.Privileges.Any(z => z.Privilege == SystemPrivileges.LeadTicketsArchive)" Icon="calendar_today" Text="Archive" Value="53"/>
+
+        @* 
+        <RadzenSplitButtonItem Style="cursor: pointer" Visible="@Layout.CurrentUser.Privileges.Any(z => z.Privilege == SystemPrivileges.LeadTicketsMoveToCompany)" Icon="calendar_today" Text="Move to Company" Value="52"/> *@
+
+
+    </ChildContent>
+</RadzenSplitButton>
+
+<RadzenDataGrid @ref="_grid" AllowColumnPicking="true" AllowColumnResize="true" AllowPickAllColumns="true" Style="min-width: 100px; overflow-x: auto; width: 99%;"
+                Count="@_totalNumber" ColumnWidth="50px"
+                AllowAlternatingRows="true" AllowColumnReorder="false"
+                AllowPaging="true"
+                AllowFiltering="true"
+                ColumnsPickerAllowFiltering="true"
+                @bind-Value="@_selectItems"
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                FilterMode="FilterMode.Advanced"
+                AllowSorting="true"
+                SelectionMode="DataGridSelectionMode.Multiple"
+                LoadData="@LoadData"
+                ShowPagingSummary="true" PageSizeOptions="@(new[] { 5, 10, 25,50,100  })"
+                Data="@_leads" TItem="LeadTicketItemForList">
+<Columns>
+
+<RadzenDataGridColumn Filterable="false" HeaderCssClass="datagrid-custom-header" Pickable="false" TItem="LeadTicketItemForList" Property="@nameof(LeadTicketItemForList.Id)" Title="" Sortable="false">
+    <HeaderTemplate>
+        <RadzenCheckBox TabIndex="-1" TriState="false" TValue="bool?" InputAttributes="@(new Dictionary<string, object> { { "aria-label", "Select all items" } })"
+                        Value="@(_leads.Length == _selectItems.Count)"
+                        Change="@(args => SelectAllItems(args))"/>
+    </HeaderTemplate>
+
+    <Template Context="data">
+        <RadzenCheckBox TabIndex="-1" TriState="false" Value="@(_selectItems.Contains(data))" InputAttributes="@(new Dictionary<string, object> { { "aria-label", "Select item" } })"
+                        TValue="bool" Change="@(args => SelectItem(args, data))"/>
+
+    </Template>
+
+</RadzenDataGridColumn>
+
+<RadzenDataGridColumn Filterable="false" HeaderCssClass="datagrid-custom-header" Pickable="false" TItem="LeadTicketItemForList" Property="@nameof(LeadTicketItemForList.Id)" Title="Id" Sortable="true">
+    <Template Context="data">
+        @{
+            var imagePath = data.IsArchived ? "/images/archived.png" : "/images/unarchived.png";
+        }
+        <RadzenImage Style="height: 20px; width: 20px;" Path="@imagePath"></RadzenImage>
+        @data.Id
+    </Template>
+</RadzenDataGridColumn>
+
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="LeadTicketItemForList" Sortable="false" Filterable="false" Property="@nameof(LeadTicketItemForList.ClientName)" Title="Client">
+    <Template Context="data">
+
+        <RadzenIcon Visible="@data.IsPotential" class="clientPotentialIcon"/>
+        <RadzenIcon Visible="@data.IsVip" class="clientVipIcon"/>
+
+        <RadzenBadge Shade="Shade.Light" BadgeStyle="BadgeStyle.Base" Text="@data.ClientName"> </RadzenBadge>
+
+    </Template>
+</RadzenDataGridColumn>
+
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="LeadTicketItemForList" Filterable="false" Sortable="false" Property="@nameof(LeadTicketItemForList.ClientPhone)" Title="Mobile"/>
+
+                        <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="LeadTicketItemForList" Filterable="false" Sortable="false" Property="@nameof(LeadTicketItemForList.OriginalProject)" Title="Original Project" />
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="true" TItem="LeadTicketItemForList" Property="@nameof(LeadTicketItemForList.CreationDate)" Title="Creation Date">
+</RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="LeadTicketItemForList" Property="@nameof(LeadTicketItemForList.CurrentAgent)" Title="Agent">
+</RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="LeadTicketItemForList" Property="@nameof(LeadTicketItemForList.LeadTicketStatus)" Title="Status">
+    <Template Context="data">
+
+        <RadzenBadge BadgeStyle="@((BadgeStyle)data.StatusBadgeStyle)" Text="@data.LeadTicketStatus"> </RadzenBadge>
+
+    </Template>
+</RadzenDataGridColumn>
+
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="true" TItem="LeadTicketItemForList" Property="@nameof(LeadTicketItemForList.SalesType)" Title="Sales Type">
+    <Template Context="data">
+
+        <RadzenBadge Shade="Shade.Dark" BadgeStyle="@((BadgeStyle)data.SalesTypeBadgeStyle)" Text="@data.SalesType"> </RadzenBadge>
+
+    </Template>
+</RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="true" TItem="LeadTicketItemForList" Property="@nameof(LeadTicketItemForList.Usage)" Title="Usage">
+    <Template Context="data">
+
+        <RadzenBadge Shade="Shade.Dark" BadgeStyle="@((BadgeStyle)data.UsageBadgeStyle)" Text="@data.Usage"> </RadzenBadge>
+
+    </Template>
+</RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="true" TItem="LeadTicketItemForList" Property="@nameof(LeadTicketItemForList.Service)" Title="Service">
+    <Template Context="data">
+
+        <RadzenBadge Shade="Shade.Dark" BadgeStyle="@((BadgeStyle)data.ServiceBadgeStyle)" Text="@data.Service"> </RadzenBadge>
+
+    </Template>
+</RadzenDataGridColumn>
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="true" TItem="LeadTicketItemForList" Property="@nameof(LeadTicketItemForList.PropertyType)" Title="Property Type"></RadzenDataGridColumn>
+
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Visible="false" Sortable="true" Filterable="false" TItem="LeadTicketItemForList" Property="@nameof(LeadTicketItemForList.AgentLastActivityDate)" Title="Last Agent Activity Date">
+</RadzenDataGridColumn>
+
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.BranchName)" Title="Branch">
+</RadzenDataGridColumn>
+
+
+
+                        <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.LastAgentFeedBack)" Title="Last Feedback">
+                        </RadzenDataGridColumn>
+                          <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.LastAgentFeedBackNote)" Title="Last Feedback Comment">
+                        </RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.CreatedBy)" Title="Lead Creator"></RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="true" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.LeadSource)" Title="Lead Source"></RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.KnowSource)" Title="Know Source">
+    <Template Context="data">
+        @($"{data.KnowSource} - {data.KnowSubSource}")
+    </Template>
+
+</RadzenDataGridColumn>
+
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" TItem="LeadTicketItemForList" Sortable="false" Visible="false" Property="@nameof(LeadTicketItemForList.Location)" Title="Location"></RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.BudgetFrom)" Title="Budget">
+    <Template Context="data">
+        @($"{data.CurrencySymbol} {data.BudgetFrom} - {data.BudgetTo}")
+    </Template>
+
+
+</RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Sortable="true" Filterable="true" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.AlreadyExistCount)" Title="Already Exist Count"></RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Sortable="true" Filterable="true" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.SettingInProgressCount)" Title="Setting In Progress Count"></RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Sortable="true" Filterable="true" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.ReassignedNewOnce)" Title="Reassigned New Count"></RadzenDataGridColumn>
+
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="true" Sortable="true" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.ReassignCount)" Title="Reassigned Count"></RadzenDataGridColumn>
+
+ 
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.ViewedByCurAgent)" Title="Viewed By Current Agent"></RadzenDataGridColumn>
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.PendingAlreadyExistView)" Title="Already Exist Pending Agent View"></RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.DirectManagerName)" Title="Direct Manager"></RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.TopMostManagerName)" Title="Top Most Manager"></RadzenDataGridColumn>
+
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.CallBackDate)" Title="Call Back Date"></RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.MarketingAgency)" Title="Marketing Agency"></RadzenDataGridColumn>
+
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.FormName)" Title="Digital Form"></RadzenDataGridColumn>
+
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.ClientType)" Title="Client Type"></RadzenDataGridColumn>
+
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="true" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.LastAssignedDate)" Title="Last Assigned Date"></RadzenDataGridColumn>
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Sortable="false" Filterable="false" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.AgentLastEventComment)" Title="Agent Last Event Comment"></RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.AgentLastEventContactingType)" Title="Agent Last Event Contacting Type"></RadzenDataGridColumn>
+ 
+ 
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="true" Sortable="true" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.CallLaterCount)" Title="Call Later Count"></RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="true" Sortable="true" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.CallLaterDistinctCount)" Title="Call Later Distinct Count"></RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Sortable="true" Filterable="true" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.HoursToGetInProgress)" Title="Hours To Get In Progress"></RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.LastEventComment)" Title="Last Event Comment"></RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.LastEventCreationDateTime)" Title="Last Event Creation DateTime"></RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.LastEventProcess)" Title="Last Event Process"></RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="true" Sortable="true" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.NoAnswerCount)" Title="No Answer Count"></RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="true" Sortable="true" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.NoAnswerDistinctCount)" Title="No Answer Distinct Count"></RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="true" Sortable="true" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.QualifiedCount)" Title="Qualified Count"></RadzenDataGridColumn>
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="true" Sortable="true" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.QualifiedDistinctCount)" Title="Qualified Distinct Count"></RadzenDataGridColumn>
+ 
+
+
+<RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Width="75px" Filterable="false" Sortable="false" TItem="LeadTicketItemForList" Visible="false" Property="@nameof(LeadTicketItemForList.LeadTicketNote)" Title="Notes"></RadzenDataGridColumn>
+
+<RadzenDataGridColumn Pickable="false" Filterable="false" Sortable="false" HeaderCssClass="datagrid-custom-header" Property="" Title="Actions" Width="70px">
+    <Template Context="data">
+        <RadzenStack Orientation="Orientation.Vertical">
+            <RadzenButton ButtonStyle="ButtonStyle.Info" Disabled="false" Variant="Variant.Flat" Shade="Shade.Lighter" Icon="info" class="rz-m-1" Click="@(() => OpenLeadTicket(data.Id,false))" Text="Peek"/>
+                                    <RadzenButton ButtonStyle="ButtonStyle.Secondary" Disabled="false" Variant="Variant.Flat" Shade="Shade.Lighter" Icon="visibility" class="rz-m-1" Click="@(() => OpenLeadTicket(data.Id,true))" Text="Open" />
+
+            <RadzenSplitButton Variant="Variant.Flat" Click="@(args => ApplySingleAction(args))" Text="Actions" ButtonStyle="ButtonStyle.Secondary">
+                <ChildContent>
+                    <RadzenSplitButtonItem Style="cursor: pointer" Visible="@data.AllowedActions.Any(z => z == SystemPrivileges.LeadTicketsAddFeedback)" Icon="calendar_today" Text="Add Feedback" Value="@($"{data.Id}_61")"/>
+
+                    <RadzenSplitButtonItem Style="cursor: pointer" Visible="@data.AllowedActions.Any(z => z == SystemPrivileges.LeadTicketsAddEvent)" Icon="calendar_today" Text="Add Reminder" Value="@($"{data.Id}_51_2")"/>
+
+                    <RadzenSplitButtonItem Style="cursor: pointer" Visible="@data.AllowedActions.Any(z => z == SystemPrivileges.LeadTicketsAddEvent)" Icon="calendar_today" Text="Add Activity" Value="@($"{data.Id}_51_0")"/>
+
+
+                    <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Assign to Agent" Visible="@data.AllowedActions.Any(z => z == SystemPrivileges.LeadTicketsAssignToAgent)" Value="@($"{data.Id}_45")"/>
+
+                    <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_return" Text="Re-Assign to Agent" Visible="@data.AllowedActions.Any(z => z == SystemPrivileges.LeadTicketsReAssignToAgent)" Value="@($"{data.Id}_46")"/>
+
+                    <RadzenSplitButtonItem Style="cursor: pointer" Visible="@data.AllowedActions.Any(z => z == SystemPrivileges.LeadTicketsConvertToBuyerRequest)" Icon="local_mall" Text="To Buyer Request" Value="@($"{data.Id}_56")"/>
+
+                    <RadzenSplitButtonItem Style="cursor: pointer" Visible="@data.AllowedActions.Any(z => z == SystemPrivileges.LeadTicketsConvertToSellerRequest)" Icon="storefront" Text="To Seller Request" Value="@($"{data.Id}_57")"/>
+
+                    <RadzenSplitButtonItem Style="cursor: pointer" Icon="handshake" Visible="@data.AllowedActions.Any(z => z == SystemPrivileges.LeadTicketsConvertToPrimeTcr)" Text="To Prime Tcr" Value="@($"{data.Id}_55")"/>
+
+
+                    <RadzenSplitButtonItem Style="cursor: pointer" Visible="@data.AllowedActions.Any(z => z == SystemPrivileges.LeadTicketsAssignToBranch)" Icon="calendar_today" Text="Assign to Branch" Value="@($"{data.Id}_47")"/>
+
+
+                    <RadzenSplitButtonItem Style="cursor: pointer" Visible="@data.AllowedActions.Any(z => z == SystemPrivileges.LeadTicketsReAssignToBranch)" Icon="calendar_today" Text="Re-Assign to Branch" Value="@($"{data.Id}_48")"/>
+
+
+                    <RadzenSplitButtonItem Style="cursor: pointer" Visible="@data.AllowedActions.Any(z => z == SystemPrivileges.LeadTicketsReject)" Icon="calendar_today" Text="Reject" Value="@($"{data.Id}_59")"/>
+
+
+                    <RadzenSplitButtonItem Style="cursor: pointer" Visible="@data.AllowedActions.Any(z => z == SystemPrivileges.LeadTicketsSetVoid)" Icon="calendar_today" Text="Set Void" Value="@($"{data.Id}_60")"/>
+
+
+                    <RadzenSplitButtonItem Style="cursor: pointer" Visible="@data.AllowedActions.Any(z => z == SystemPrivileges.LeadTicketsUnArchive)" Icon="calendar_today" Text="Un-Archive" Value="@($"{data.Id}_54")"/>
+
+
+                    <RadzenSplitButtonItem Style="cursor: pointer" Visible="@data.AllowedActions.Any(z => z == SystemPrivileges.LeadTicketsArchive)" Icon="calendar_today" Text="Archive" Value="@($"{data.Id}_53")"/>
+
+
+                    <RadzenSplitButtonItem Style="cursor: pointer" Visible="@data.AllowedActions.Any(z => z == SystemPrivileges.LeadTicketsMoveToCompany)" Icon="calendar_today" Text="Move to Company" Value="@($"{data.Id}_52")"/>
+
+
+                    <RadzenSplitButtonItem Style="cursor: pointer" Visible="@data.AllowedActions.Any(z => z == SystemPrivileges.LeadTicketsCreateDuplicate)" Icon="calendar_today" Text="Create Duplicate" Value="@($"{data.Id}_58")"/>
+
+                </ChildContent>
+            </RadzenSplitButton>
+        </RadzenStack>
+    </Template>
+</RadzenDataGridColumn>
+</Columns>
+
+</RadzenDataGrid>
+
+</RadzenColumn>
+</RadzenRow>
+</RadzenStack>
+
+</RadzenColumn>
+<script type="text/javascript" language="javascript">
+        const
+      scope       = document.documentElement
+     , btGoTop     = document.querySelector('#SearchButton')
+    , borderDelta = 300
+      ;
+    window.onscroll = btTopBotShow;
+    window.onresize = btTopBotShow;
+
+    btTopBotShow(); // on page load...
+
+    // btGoBot.onclick = () =>
+    //   {
+    //   scope.scrollTop = scope.scrollHeight - window.innerHeight;
+    //   }
+    // btGoTop.onclick = () =>
+    //   {
+    //   scope.scrollTop = 0;
+    //   }
+
+    function btTopBotShow()
+      {
+      let bottomDelta = scope.scrollHeight - window.innerHeight - scope.scrollTop;
+
+       
+      btGoTop.classList.toggle('noDisplay', scope.scrollTop < borderDelta )
+      }
+
+</script>
+
+
+
+<script language="javascript" type="text/javascript">
+
+    window.downloadFileFromStream = async (fileName, contentStreamReference) => {
+        const arrayBuffer = await contentStreamReference.arrayBuffer();
+        const blob = new Blob([arrayBuffer]);
+        const url = URL.createObjectURL(blob);
+        const anchorElement = document.createElement('a');
+        anchorElement.href = url;
+        anchorElement.download = fileName ?? '';
+        anchorElement.click();
+        anchorElement.remove();
+        URL.revokeObjectURL(url);
+    }
+</script>

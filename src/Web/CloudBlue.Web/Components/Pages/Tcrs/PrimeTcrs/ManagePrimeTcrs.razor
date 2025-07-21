@@ -1,0 +1,840 @@
+﻿@page "/prime-tcrs/manage"
+@page "/prime-tcrs/manage/{mode:int?}"
+@using CloudBlue.Domain.DomainModels.Filtration.Interfaces
+@using CloudBlue.Domain.DomainModels.PrimeTcrs
+@using CloudBlue.Domain.Enums
+@using CloudBlue.Domain.GenericTypes
+@inject IJSRuntime JSRuntime;
+<h3>Manage Prime Tcrs</h3>
+<style>
+ /*     .rz-grid-table { width: auto !important; }
+  */
+    .rz-grid-table td .rz-cell-data {
+        overflow-wrap: break-word;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
+
+
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 20px;
+    }
+
+    /* #SearchButton, */
+    #toBottom {
+        position: fixed;
+        right: 30px;
+        z-index: 99;
+        font-size: 18px;
+        border: none;
+        outline: none;
+        background-color: red;
+        color: white;
+        cursor: pointer;
+        padding: 15px;
+        border-radius: 4px;
+    }
+    /*
+    #toBottom { top    : 20px; }
+    #toTop    { bottom : 20px; }
+    */
+    #toBottom {
+        top: calc( 50vh - 60px );
+    }
+
+    #toTop {
+        top: calc( 50vh + 4px );
+    }
+
+        #toTop:hover,
+        #toBottom:hover {
+            background-color: #555;
+        }
+
+    .noDisplay {
+        display: none;
+    }
+
+</style>
+<RadzenColumn SizeMD="12">
+
+<RadzenStack>
+
+<RadzenTemplateForm TItem="PrimeTcrsFiltersModel" Data="@_filters">
+
+
+<RadzenPanel AllowCollapse="true" class="rz-my-10 rz-mx-auto">
+<HeaderTemplate>
+    <RadzenText TextStyle="TextStyle.H6" class="rz-display-flex rz-align-items-center rz-m-0">
+        <RadzenIcon Icon="filter_alt" class="rz-me-1"/><b>Filters</b>
+    </RadzenText>
+</HeaderTemplate>
+
+<ChildContent>
+
+
+@* Client Filters *@
+
+<RadzenFieldset AllowCollapse="true">
+
+<ChildContent>
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Tcr Ids" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenTextBox style="display: block; width: 100%" @bind-Value="@_filters.EntityIds" Name="EntityIds"/>
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Lead Ticket Ids" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenTextBox style="display: block; width: 100%" @bind-Value="@_filters.LeadTicketsIds" Name="LeadTicketsIds"/>
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Unit Number" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenTextBox style="display: block; width: 100%" @bind-Value="@_filters.UnitId" Name="UnitId"/>
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+</RadzenRow>
+
+
+<RadzenRow AlignItems="AlignItems.Center" Visible="_accountingOnlyFilters" JustifyContent="JustifyContent.Center">
+    <RadzenColumn Size="12" SizeMD="3">
+        <RadzenFormField Text="Invoiced" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="InvoicedId" Data="@_yesNoOptions" TextProperty="ItemName" ValueProperty="ItemId" @bind-Value="@_filters.InvoicedId"
+
+                            Style="width: 100%;"/>
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3">
+        <RadzenFormField Text="Collected" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="CollectedId" Data="@_yesNoOptions" TextProperty="ItemName" ValueProperty="ItemId" @bind-Value="@_filters.CollectedId"
+
+                            Style="width: 100%;"/>
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3">
+        <RadzenFormField Text="Half Commission" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="HalfCommissionCollectedStatusId" Data="@_yesNoOptions" TextProperty="ItemName" ValueProperty="ItemId" @bind-Value="@_filters.HalfCommissionCollectedStatusId"
+
+                            Style="width: 100%;"/>
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+     <RadzenColumn Size="12" SizeMD="3">
+         
+        <RadzenFormField Text="" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenStack Orientation="Orientation.Vertical">
+            <RadzenStack Orientation="Orientation.Horizontal">
+                                                
+                                                <RadzenCheckBox @bind-Value="@_filters.IncludeHalfCommission" Name="IncludeHalfCommission"></RadzenCheckBox>
+                                                <RadzenLabel Text="Include Half Commission" Component="IncludeHalfCommission" Style="margin-right: 1rem;" class="rz-color-dark" />
+                                            
+                                    </RadzenStack>
+                                            <RadzenStack Orientation="Orientation.Horizontal">
+
+                                               
+
+                                                <RadzenCheckBox @bind-Value="@_filters.IncludeHalfConfirmed" Name="IncludeHalfConfirmed"></RadzenCheckBox>
+                                                <RadzenLabel Text="Include Half Confirmed" Component="IncludeHalfConfirmed" Style="margin-right: 1rem;" class="rz-color-dark" />
+
+                                        </RadzenStack>
+                                        </RadzenStack>
+                                         
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+   
+
+</RadzenRow>
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Lead Source" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="LeadSourceId" @bind-Value="@_filters.LeadSourceId" Data="@_leadSources" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Lead Source" Style="width: 100%;"/>
+
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Marketing Agency" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="AgencyId" @bind-Value="@_filters.AgencyId" Data="@_agencies" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Marketing Agency" Style="width: 100%;"/>
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+                                <RadzenColumn Size="12" SizeMD="4">
+                                    <RadzenFormField Text="Was Old" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                        <RadzenDropDown AllowClear="true" Name="WasOldId" Data="@_yesNoOptions" TextProperty="ItemName" ValueProperty="ItemId" @bind-Value="@_filters.WasOldId"
+                                                        Style="width: 100%;" />
+
+                                    </RadzenFormField>
+
+
+                                </RadzenColumn>
+</RadzenRow>
+
+
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Usage" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true"
+                            Name="UsageId" @bind-Value="@_filters.UsageId" Data="@_usages" TextProperty="ItemName" ValueProperty="ItemId" Change="@UsageChanged" Placeholder="Select Usage" Style="width: 100%;"/>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Property Type" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="PropertyTypeId" @bind-Value="@_filters.PropertyTypeId" Data="@_propertyTypes" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Property Type" Style="width: 100%;"/>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Is Corporate" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="IsCorporateId" Data="@_yesNoOptions" TextProperty="ItemName" ValueProperty="ItemId" @bind-Value="@_filters.IsCorporateId"
+
+                            Style="width: 100%;"/>
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+
+</RadzenRow>
+
+
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Developer" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true"
+                            Name="DeveloperId" @bind-Value="@_filters.DeveloperId" Data="@_developers" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" TextProperty="ItemName" ValueProperty="ItemId" Change="@DeveloperChanged" Placeholder="Select Developer" Style="width: 100%;"/>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Project" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="ProjectId" @bind-Value="@_filters.ProjectId" Data="@_projects" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Project" Style="width: 100%;"/>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Verification Status" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="VerificationStatusId" @bind-Value="@_filters.VerificationStatusId" Data="@_verificationStatuses" TextProperty="ItemName" ValueProperty="ItemId" Placeholder="Select Verification Status" Style="width: 100%;"/>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+</RadzenRow>
+
+
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+    <RadzenColumn Size="12" SizeMD="3">
+
+        <RadzenFormField Text=" Rec Reserve Date (From)" Variant="Variant.Outlined" Style="width: 100%;">
+            <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_filters.RecReserveDateFrom" Name="RecReserveDateFrom"/>
+        </RadzenFormField>
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3">
+
+        <RadzenFormField Text="  Rec Reserve Date (To)" Variant="Variant.Outlined" Style="width: 100%;">
+            <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_filters.RecReserveDateTo" Name="RecReserveDateTo"/>
+        </RadzenFormField>
+
+    </RadzenColumn>
+
+    <RadzenColumn Size="12" SizeMD="3">
+
+        <RadzenFormField Text=" Rec Contract  Date (From)" Variant="Variant.Outlined" Style="width: 100%;">
+            <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_filters.RecContractDateFrom" Name="RecContractDateFrom"/>
+        </RadzenFormField>
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3">
+
+        <RadzenFormField Text="Rec Contract  Date (To)" Variant="Variant.Outlined" Style="width: 100%;">
+            <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_filters.RecContractDateTo" Name="RecContractDateTo"/>
+        </RadzenFormField>
+
+    </RadzenColumn>
+
+</RadzenRow>
+
+
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+    <RadzenColumn Size="12" SizeMD="3">
+
+        <RadzenFormField Text="Creation Date (From)" Variant="Variant.Outlined" Style="width: 100%;">
+            <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_filters.EntityCreationDateFrom" Name="EntityCreationDateFrom"/>
+        </RadzenFormField>
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3">
+
+        <RadzenFormField Text="Creation Date (To)" Variant="Variant.Outlined" Style="width: 100%;">
+            <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_filters.EntityCreationDateTo" Name="EntityCreationDateTo"/>
+        </RadzenFormField>
+
+    </RadzenColumn>
+
+    <RadzenColumn Size="12" SizeMD="3">
+
+        <RadzenFormField Text="Confirmation Date (From)" Variant="Variant.Outlined" Style="width: 100%;">
+            <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_filters.ConfirmContractDateFrom" Name="ConfirmContractDateFrom"/>
+        </RadzenFormField>
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3">
+
+        <RadzenFormField Text="Confirmation Date (To)" Variant="Variant.Outlined" Style="width: 100%;">
+            <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_filters.ConfirmContractDateTo" Name="ConfirmContractDateTo"/>
+        </RadzenFormField>
+
+    </RadzenColumn>
+
+</RadzenRow>
+
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+
+    <RadzenColumn Size="12" SizeMD="3">
+
+        <RadzenFormField Text="Last Reviewed Date (From)" Variant="Variant.Outlined" Style="width: 100%;">
+            <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_filters.LastReviewedDateFrom" Name="LastReviewedDateFrom"/>
+        </RadzenFormField>
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3">
+
+        <RadzenFormField Text=" Last Reviewed Date (To)" Variant="Variant.Outlined" Style="width: 100%;">
+            <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_filters.LastReviewedDateTo" Name="LastReviewedDateTo"/>
+        </RadzenFormField>
+
+    </RadzenColumn>
+
+
+    <RadzenColumn Size="12" SizeMD="3">
+
+        <RadzenFormField Text="Last Conflict Date (From)" Variant="Variant.Outlined" Style="width: 100%;">
+            <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_filters.LastConflictDateFrom" Name="LastConflictDateFrom"/>
+        </RadzenFormField>
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3">
+
+        <RadzenFormField Text="Last Conflict Date (To)" Variant="Variant.Outlined" Style="width: 100%;">
+            <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_filters.LastConflictDateTo" Name="LastConflictDateTo"/>
+        </RadzenFormField>
+
+    </RadzenColumn>
+
+
+</RadzenRow>
+
+
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+
+    <RadzenColumn Size="12" SizeMD="3">
+
+        <RadzenFormField Text="Last Resolved Date (From)" Variant="Variant.Outlined" Style="width: 100%;">
+            <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_filters.LastResolvedDateFrom" Name="LastResolvedDateFrom"/>
+        </RadzenFormField>
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3">
+
+        <RadzenFormField Text="Last Resolved Date (To)" Variant="Variant.Outlined" Style="width: 100%;">
+            <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_filters.LastResolvedDateTo" Name="LastResolvedDateTo"/>
+        </RadzenFormField>
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3">
+
+        <RadzenFormField Text="Postpone  Date (From)" Variant="Variant.Outlined" Style="width: 100%;">
+            <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_filters.PostponeDateFrom" Name="PostponeDateFrom"/>
+        </RadzenFormField>
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3">
+
+        <RadzenFormField Text="Postpone Date (To)" Variant="Variant.Outlined" Style="width: 100%;">
+            <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_filters.PostponeDateTo" Name="PostponeDateTo"/>
+        </RadzenFormField>
+
+    </RadzenColumn>
+
+</RadzenRow>
+ 
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+    <RadzenColumn Size="12" SizeMD="3">
+
+        <RadzenFormField Text="Closing Marketing Channel" Variant="Variant.Outlined" Style="width: 100%;">
+            <RadzenDropDown AllowClear="true" Change="ClosingKnowChanged"
+                            Name="KnowSourceId" @bind-Value="@_filters.ClosingChannelId" Data="@_knowItems" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Know Item" Style="width: 100%;"/>
+        </RadzenFormField>
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3">
+        <RadzenFormField Text="Closing Marketing Channel Sub Channel" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="KnowSubSourceId" @bind-Value="@_filters.ClosingSubChannelId" Data="@_closingKnowSubItems" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Know Sub Item" Style="width: 100%;"/>
+        </RadzenFormField>
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3">
+
+        <RadzenFormField Text="Lead Ticket Marketing Channel" Variant="Variant.Outlined" Style="width: 100%;">
+            <RadzenDropDown AllowClear="true" Change="KnowSourceChanged"
+                            Name="KnowSourceId" @bind-Value="@_filters.KnowSourceId" Data="@_knowItems" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Know Item" Style="width: 100%;"/>
+        </RadzenFormField>
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3">
+        <RadzenFormField Text="Lead Ticket Marketing Sub Channel" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="KnowSubSourceId" @bind-Value="@_filters.KnowSubSourceId" Data="@_knowSubItems" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Know Sub Item" Style="width: 100%;"/>
+        </RadzenFormField>
+    </RadzenColumn>
+
+
+</RadzenRow>
+
+
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+
+    <RadzenColumn Size="12" SizeMD="3">
+        <RadzenFormField Text="Country" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="CountryId" Change="CountryChanged" @bind-Value="@_filters.CountryId" Data="@_countries" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Country" Style="width: 100%;"/>
+
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3">
+        <RadzenFormField Text="City" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="CityId" @bind-Value="@_filters.CityId" Data="@_cities" Change="CityChanged" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select City" Style="width: 100%;"/>
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+
+    <RadzenColumn Size="12" SizeMD="3">
+        <RadzenFormField Text="District" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Change="DistrictChanged" Name="DistrictId" @bind-Value="@_filters.DistrictId" Data="@_districts" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select District" Style="width: 100%;"/>
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3">
+        <RadzenFormField Text="Neighborhood" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="NeighborhoodId" @bind-Value="@_filters.NeighborhoodId" Data="@_neighborhoods" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Neighborhood" Style="width: 100%;"/>
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+
+
+</RadzenRow>
+
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Company" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="CompanyId" @bind-Value="@_filters.CompanyId" Data="@_companies" Change="@PopulateAgents" TextProperty="ItemName" ValueProperty="ItemId" Placeholder="Select Company" Style="width: 100%;"/>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Branch" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="BranchId" @bind-Value="@_filters.BranchId" Data="@_branches" Change="@PopulateAgents" TextProperty="ItemName" ValueProperty="ItemId" Placeholder="Select Branch" Style="width: 100%;"/>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Top Managers" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="_topManagerId" @bind-Value="@_topManagerId" Data="@_topManagers" Change="@PopulateAgents" TextProperty="ItemName" ValueProperty="ItemId" Placeholder="Select Top Manager" Style="width: 100%;"/>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+</RadzenRow>
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Salespersons Category" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenDropDown AllowClear="true" Name="SalesPersonClassId" @bind-Value="@_salesPersonClassId" Data="@_salesClasses" Change="@PopulateAgents" TextProperty="ItemName" ValueProperty="ItemId" Placeholder="Select Salespersons Category" Style="width: 100%;"/>
+        </RadzenFormField>
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Sales Person" Variant="Variant.Outlined" Style="width: 100%;">
+
+
+            <RadzenDropDown Name="AgentIds" @bind-Value="@_filters.AgentId" Data="@_agents" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" Multiple="false" Chips="false" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Agent" AllowClear="true" Style="width: 100%;">
+                <Template Context="newContext">
+                    @{
+                        var val = newContext as LookupItem<int>;
+                    }
+                    <RadzenIcon MouseEnter="@(args => ShowTooltip(args, val.ExtraId))" class="@($"li{val.ExtraId}Icon")">
+
+                    </RadzenIcon>
+                    <b>
+                        <span>@($"{val.ItemName} ({val.ItemId})")</span>
+                    </b>
+                </Template>
+            </RadzenDropDown>
+
+
+        </RadzenFormField>
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Tree" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <RadzenToggleButton @bind-Value="@_filters.AgentsRecursive" ButtonStyle="ButtonStyle.Light"
+                                ToggleButtonStyle="ButtonStyle.Light">
+                <RadzenBadge BadgeStyle="@(_filters.AgentsRecursive ? BadgeStyle.Info : BadgeStyle.Danger)" Text="@(_filters.AgentsRecursive ? "ON" : "OFF")" Shade="Shade.Lighter"/>
+
+            </RadzenToggleButton>
+
+
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+</RadzenRow>
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="Status" Variant="Variant.Outlined" Style="width: 100%;">
+
+                    
+                                        <RadzenDropDown Name="EntityStatusIds" @bind-Value="@_filters.EntityStatusIds" Data="@_primeTcrStatuses" Multiple="true" AllowClear="true" TextProperty="ItemName" ValueProperty="ItemId" Chips="true" Placeholder="Select Status" Style="width: 100%;" />
+
+                     
+                </RadzenFormField>
+            </RadzenColumn>
+            </RadzenRow>
+</ChildContent>
+</RadzenFieldset>
+
+
+<RadzenButton ButtonType="ButtonType.Submit" Id="SearchButton" Shade="Shade.Lighter" Click="@Search" Text="Search" ButtonStyle="ButtonStyle.Secondary"/>
+
+
+<RadzenButton Shade="Shade.Lighter" Click="@ResetFilters" Text="Reset Filters" ButtonStyle="ButtonStyle.Primary"/>
+
+</ChildContent>
+</RadzenPanel>
+
+
+</RadzenTemplateForm>
+ 
+
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+    <RadzenColumn Size="12" SizeMD="12">
+
+        <RadzenButton Text="Reset Grid" Click="@(args => { _grid.Reset(); })" class="rz-my-4"/>
+
+
+                    <RadzenSplitButton Variant="Variant.Filled" Shade="Shade.Light" Click="@(args => ApplyBulkAction(args))" Text="Bulk Actions" class="rz-splitbutton rz-buttonset" ButtonStyle="ButtonStyle.Secondary">
+                        <ChildContent>
+                            
+                        <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Export" Visible="@Layout.CurrentUser.Privileges.Any(z => z.Privilege == SystemPrivileges.PrimeTcrsExport)" Value="5017" />
+
+                            <RadzenSplitButtonItem Style="cursor: pointer" Visible="@Layout.CurrentUser.Privileges.Any(z => z.Privilege ==  SystemPrivileges.PrimeTcrsCanSetReviewing)" Icon="calendar_today" Text="Reviewing by Developer" Value="7031">
+
+                            </RadzenSplitButtonItem>
+
+
+                        <RadzenSplitButtonItem Style="cursor: pointer" Icon="assignment_turned_in" Text="Set Contracted" Visible="@Layout.CurrentUser.Privileges.Any(z => z.Privilege == SystemPrivileges.PrimeTcrsBulkSetContracted)" Value="7042" />
+                             
+
+                        </ChildContent>
+                    </RadzenSplitButton>
+
+
+
+        <RadzenDataGrid @ref="_grid" AllowColumnPicking="true" AllowColumnResize="true" AllowPickAllColumns="true" Style="min-width: 100px; overflow-x: auto; width: 99%;"
+                        Count="@_totalNumber" ColumnWidth="50px"
+                        AllowAlternatingRows="true" AllowColumnReorder="false"
+                        AllowPaging="true"
+                        AllowFiltering="true"
+                        ColumnsPickerAllowFiltering="true"
+                        @bind-Value="@_selectItems"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        FilterMode="FilterMode.Advanced"
+                        AllowSorting="true"
+                        SelectionMode="DataGridSelectionMode.Multiple"
+                        LoadData="@LoadData"
+                        ShowPagingSummary="true" PageSizeOptions="@(new[] { 5, 10, 25, 50, 100 })"
+                        Data="@_primeTcrs" TItem="PrimeTcrItemForList">
+            <Columns>
+
+                <RadzenDataGridColumn Filterable="false" HeaderCssClass="datagrid-custom-header" Pickable="false" TItem="PrimeTcrItemForList" Property="@nameof(PrimeTcrItemForList.Id)" Title="" Sortable="false">
+                    <HeaderTemplate>
+                        <RadzenCheckBox TabIndex="-1" TriState="false" TValue="bool?" InputAttributes="@(new Dictionary<string, object> { { "aria-label", "Select all items" } })"
+                                        Value="@(_primeTcrs.Length == _selectItems.Count)"
+                                        Change="@(args => SelectAllItems(args))"/>
+                    </HeaderTemplate>
+
+                    <Template Context="data">
+                        <RadzenCheckBox TabIndex="-1" TriState="false" Value="@(_selectItems.Contains(data))" InputAttributes="@(new Dictionary<string, object> { { "aria-label", "Select item" } })"
+                                        TValue="bool" Change="@(args => SelectItem(args, data))"/>
+
+                    </Template>
+
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn Filterable="false" HeaderCssClass="datagrid-custom-header" Pickable="false" TItem="PrimeTcrItemForList" Property="@nameof(PrimeTcrItemForList.Id)" Title="Id" Sortable="true">
+
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn Filterable="false" HeaderCssClass="datagrid-custom-header" TItem="PrimeTcrItemForList" Property="@nameof(PrimeTcrItemForList.LeadTicketId)" Title="Lead Ticket Id" Sortable="false">
+
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="PrimeTcrItemForList" Sortable="false" Filterable="false" Property="@nameof(PrimeTcrItemForList.UnitNumber)" Title="Unit Number">
+
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="PrimeTcrItemForList" Sortable="false" Filterable="false" Property="@nameof(PrimeTcrItemForList.ClientName)" Title="Client">
+
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="PrimeTcrItemForList" Sortable="false" Filterable="false" Property="@nameof(PrimeTcrItemForList.FirstAgentName)" Title="Primary Agent">
+
+                </RadzenDataGridColumn>
+
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="PrimeTcrItemForList" Filterable="false" Sortable="false" Property="@nameof(PrimeTcrItemForList.BranchName)" Title="Branch"/>
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="PrimeTcrItemForList" Filterable="false" Sortable="false" Property="@nameof(PrimeTcrItemForList.ProjectName)" Title="Project"/>
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Property="@nameof(PrimeTcrItemForList.SalesVolume)" Title="Sales Volume">
+                </RadzenDataGridColumn>
+
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Property="@nameof(PrimeTcrItemForList.ConfirmedContractingDate)" Title="Confirmation Date">
+                </RadzenDataGridColumn>
+
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Property="@nameof(PrimeTcrItemForList.PrimeTcrStatusName)" Title="Status">
+                    <Template Context="data">
+
+                        <RadzenBadge BadgeStyle="@((BadgeStyle)data.StatusBadgeStyle)" Text="@data.PrimeTcrStatusName"> </RadzenBadge>
+
+                    </Template>
+                </RadzenDataGridColumn>
+
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Visible="false" Property="@nameof(PrimeTcrItemForList.LeadSource)" Title="Lead Source"></RadzenDataGridColumn>
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Visible="false" Property="@nameof(PrimeTcrItemForList.LastMarketingChannel)" Title="Lead Marketing Channel">
+                    <Template Context="data">
+                        @($"{data.LastMarketingChannel} - {data.LastMarketingSubChannel}")
+                    </Template>
+
+                </RadzenDataGridColumn>
+
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Visible="false" Property="@nameof(PrimeTcrItemForList.ClosingChannel)" Title="Closing Marketing Channel">
+                    <Template Context="data">
+                        @($"{data.ClosingChannel} - {data.ClosingSubChannel}")
+                    </Template>
+
+                </RadzenDataGridColumn>
+
+                 
+                
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Visible="false" Property="@nameof(PrimeTcrItemForList.PropertyType)" Title="Property Type">
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Visible="false" Property="@nameof(PrimeTcrItemForList.CompanyName)" Title="Company">
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Visible="false" Property="@nameof(PrimeTcrItemForList.RecReserveDate)" Title="Rec Reserve Date">
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Visible="false" Property="@nameof(PrimeTcrItemForList.RecCloseDate)" Title="Rec Close Date">
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Visible="false" Property="@nameof(PrimeTcrItemForList.Usage)" Title="Usage">
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Visible="false" Property="@nameof(PrimeTcrItemForList.ContractExpectedDate)" Title="Contract Expected Date">
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Visible="false" Property="@nameof(PrimeTcrItemForList.CreationDateTime)" Title="Creation Date">
+                </RadzenDataGridColumn>
+
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Visible="false" Property="@nameof(PrimeTcrItemForList.DeveloperName)" Title="Developer">
+                </RadzenDataGridColumn>
+
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Visible="false" Property="@nameof(PrimeTcrItemForList.OutsideBrokerName)" Title="Outside Broker">
+                </RadzenDataGridColumn>
+
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Visible="false" Property="@nameof(PrimeTcrItemForList.MarketingAgency)" Title="Marketing Agency">
+                </RadzenDataGridColumn>
+
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Visible="false" Property="@nameof(PrimeTcrItemForList.LeadTicketCreationDate)" Title="Lead Ticket Creation Date">
+                </RadzenDataGridColumn>
+
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Visible="false" Property="@nameof(PrimeTcrItemForList.CreatedBy)" Title="CreatedBy">
+                </RadzenDataGridColumn>
+
+
+                
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Visible="false" Property="@nameof(PrimeTcrItemForList.ExtraManagerName)" Title="Extra Manager">
+                </RadzenDataGridColumn>
+
+
+                 
+
+                        <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Visible="false" Property="@nameof(PrimeTcrItemForList.IsCorporate)" Title="Corporate">
+                </RadzenDataGridColumn>
+
+
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Visible="false" Property="@nameof(PrimeTcrItemForList.LastConflictDate)" Title="Last Conflict Date">
+                </RadzenDataGridColumn>
+
+
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Visible="false" Property="@nameof(PrimeTcrItemForList.LastDeveloperFeedBack)" Title="Last Developer FeedBack">
+                </RadzenDataGridColumn>
+
+
+
+                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" Filterable="false" Sortable="false" TItem="PrimeTcrItemForList" Visible="false" Property="@nameof(PrimeTcrItemForList.IsReOpen)" Title="Is Re-Open">
+                </RadzenDataGridColumn>
+
+                  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <RadzenDataGridColumn Pickable="false" Filterable="false" Sortable="false" HeaderCssClass="datagrid-custom-header" Property="" Title="Actions" Width="70px">
+                    <Template Context="data">
+                        <RadzenStack Orientation="Orientation.Vertical">
+                            <RadzenButton ButtonStyle="ButtonStyle.Info" Disabled="false" Variant="Variant.Flat" Shade="Shade.Lighter" Icon="info" class="rz-m-1" Click="@(() => OpenPrimeTcr(data.Id))" Text="Peek"/>
+
+                         
+                        </RadzenStack>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+
+        </RadzenDataGrid>
+
+    </RadzenColumn>
+</RadzenRow>
+
+
+</RadzenStack>
+
+</RadzenColumn>
+
+
+
+
+<script language="javascript" type="text/javascript">
+
+    window.downloadFileFromStream = async (fileName, contentStreamReference) => {
+        const arrayBuffer = await contentStreamReference.arrayBuffer();
+        const blob = new Blob([arrayBuffer]);
+        const url = URL.createObjectURL(blob);
+        const anchorElement = document.createElement('a');
+        anchorElement.href = url;
+        anchorElement.download = fileName ?? '';
+        anchorElement.click();
+        anchorElement.remove();
+        URL.revokeObjectURL(url);
+    }
+</script>

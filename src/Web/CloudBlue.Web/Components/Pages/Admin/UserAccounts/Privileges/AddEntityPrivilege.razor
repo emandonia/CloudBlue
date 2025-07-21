@@ -1,0 +1,56 @@
+@page "/add-entity-privilege"
+@using CloudBlue.Domain.DomainModels
+@using DocumentFormat.OpenXml.EMMA
+<Spinners></Spinners>
+<PageTitle>Add Entity Privilege</PageTitle>
+    <RadzenColumn SizeMD=12>
+          <RadzenTemplateForm TItem="EntityPrivilegeModel" Data="@model"  Submit="@FormSubmit">
+          <RadzenStack>
+            <RadzenFormField Text="Privilege Category" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenDropDown Name="CategoryId" Change="PrivilegeCategoryChanged" @bind-Value="@model.PrivilegeCategoryId" Data="@_privilegeCategories" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Category" Style="width: 100%;" />
+                    <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="CategoryId" ComponentProperty="Value" />
+              </ChildContent>
+            </RadzenFormField>
+            
+            <RadzenFormField Text="Privilege" Variant="Variant.Outlined">
+                <ChildContent>
+                    <RadzenDropDown Name="PrivilegeId" @bind-Value="@model.PrivilegeId" Data="@_privileges" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Privilege" Style="width: 100%;" />
+                    <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="PrivilegeId" ComponentProperty="Value" />
+                </ChildContent>
+            </RadzenFormField>
+            
+            <RadzenFormField Text="Entity Type" Variant="Variant.Outlined">
+                <ChildContent>
+                    <RadzenDropDown Name="PrivilegeEntityTypeId" Change="EntityTypeChanged" @bind-Value="@model.PrivilegeEntityTypeId" Data="@_entityTypes" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Entity Type" Style="width: 100%;" />
+                    <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="PrivilegeEntityTypeId" ComponentProperty="Value" />
+                </ChildContent>
+            </RadzenFormField> 
+            
+            <RadzenFormField Visible="@_showEntityList" Text="@_entityLabel" Variant="Variant.Outlined">
+                <ChildContent>
+                    <RadzenDropDown AllowClear="true" Name="EntityId" Data="@_privilegeEntities" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" AllowVirtualization="true" VirtualizationOverscanCount="5" Placeholder="Select Entity" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @bind-Value="@model.EntityId" Style="width: 100%;" />
+                    <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="EntityId" ComponentProperty="Value" />
+
+                </ChildContent>
+            </RadzenFormField> 
+
+             
+
+            <RadzenFormField   Text="Privilege Scope" Variant="Variant.Outlined">
+                <ChildContent>
+                    <RadzenDropDown Name="PrivilegeScopeId" @bind-Value="@model.PrivilegeScopeId" Data="@_privilegeScopes" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Scope" Style="width: 100%;" />
+                    <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="PrivilegeScopeId" ComponentProperty="Value" />
+                </ChildContent>
+            </RadzenFormField> 
+
+
+            
+          </RadzenStack>
+          <RadzenStack style="margin-top:1rem;" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Close" Variant="Variant.Flat" Click="@CancelButtonClick"  />
+          </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+

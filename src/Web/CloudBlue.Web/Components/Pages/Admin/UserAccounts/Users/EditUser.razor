@@ -1,0 +1,287 @@
+@page "/edit-user"
+
+<PageTitle>Edit User</PageTitle>
+<RadzenRow>
+    <RadzenColumn SizeMD="9">
+    <RadzenLabel style="font-weight: bold" Text="Item no longer available." Visible="@(!canEdit)" />
+    </RadzenColumn>
+    <RadzenColumn SizeMD="3">
+    <RadzenButton ButtonStyle="ButtonStyle.Secondary" style="margin-bottom: 20px" Text="Close" Visible="@(!canEdit)" Click="@CancelButtonClick" />
+    </RadzenColumn>
+</RadzenRow>
+<RadzenRow>
+    <RadzenColumn SizeMD="9">
+    <RadzenLabel style="font-weight: bold" Text="Another user has made conflicting changes to one or more of the fields you have modified. Please reload." Visible="@hasChanges" />
+    </RadzenColumn>
+    <RadzenColumn SizeMD="3">
+    <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="autorenew" style="margin-bottom: 20px" Text="Reload" Visible="@hasChanges" Click="@ReloadButtonClick" />
+    </RadzenColumn>
+</RadzenRow>
+
+    <RadzenColumn SizeMD=12>
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save User</RadzenAlert>
+        <RadzenTemplateForm TItem="NewCloudBlueMirror.Models.CloudBlue.User" Data="@user" Visible="@(user != null && canEdit)" Submit="@FormSubmit">
+          <RadzenStack>
+            <RadzenFormField Text="Company Id" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@user.CompanyId" Name="CompanyId" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="CompanyId" Text="CompanyId is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Branch Id" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@user.BranchId" Name="BranchId" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="BranchId" Text="BranchId is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Full Name" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@user.FullName" Name="FullName" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="FullName" Text="FullName is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Parent Id" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@user.ParentId" Name="ParentId" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="ParentId" Text="ParentId is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Is Parent" Component="IsParent" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@user.IsParent" Name="IsParent" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Is Virtual" Component="IsVirtual" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@user.IsVirtual" Name="IsVirtual" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenFormField Text="Position Id" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@user.PositionId" Name="PositionId" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="PositionId" Text="PositionId is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Hire Date" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenDatePicker DateFormat="ddd dd MMM,, yyyy" style="display: block; width: 100%" @bind-Value="@user.HireDate" Name="HireDate" />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="In Resale Team" Component="InResaleTeam" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@user.InResaleTeam" Name="InResaleTeam" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenFormField Text="Resign Date" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenDatePicker DateFormat="ddd dd MMM,, yyyy" style="display: block; width: 100%" @bind-Value="@user.ResignDate" Name="ResignDate" />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenFormField Text="Resign Date Numeric" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@user.ResignDateNumeric" Name="ResignDateNumeric" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="ResignDateNumeric" Text="ResignDateNumeric is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Top Most Manager Id" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@user.TopMostManagerId" Name="TopMostManagerId" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="TopMostManagerId" Text="TopMostManagerId is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Top Most Manager Name" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@user.TopMostManagerName" Name="TopMostManagerName" />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenFormField Text="Hire Date Numeric" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@user.HireDateNumeric" Name="HireDateNumeric" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="HireDateNumeric" Text="HireDateNumeric is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Last Promotion Date" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenDatePicker DateFormat="ddd dd MMM,, yyyy" style="display: block; width: 100%" @bind-Value="@user.LastPromotionDate" Name="LastPromotionDate" />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenFormField Text="Last Promotion Date Numeric" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@user.LastPromotionDateNumeric" Name="LastPromotionDateNumeric" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="LastPromotionDateNumeric" Text="LastPromotionDateNumeric is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Password" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@user.Password" Name="Password" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="Password" Text="Password is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="User Name" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@user.UserName" Name="UserName" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="UserName" Text="UserName is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Reset Password Key" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@user.ResetPasswordKey" Name="ResetPasswordKey" />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenFormField Text="Password Salt" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@user.PasswordSalt" Name="PasswordSalt" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="PasswordSalt" Text="PasswordSalt is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Email" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@user.Email" Name="Email" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="Email" Text="Email is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Is Approved" Component="IsApproved" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@user.IsApproved" Name="IsApproved" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Is Locked Out" Component="IsLockedOut" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@user.IsLockedOut" Name="IsLockedOut" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenFormField Text="Create Date" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenDatePicker DateFormat="ddd dd MMM,, yyyy" style="display: block; width: 100%" @bind-Value="@user.CreateDate" Name="CreateDate" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="CreateDate" Text="CreateDate is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Last Update Date" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenDatePicker DateFormat="ddd dd MMM,, yyyy" style="display: block; width: 100%" @bind-Value="@user.LastUpdateDate" Name="LastUpdateDate" />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenFormField Text="Last Login Date" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenDatePicker DateFormat="ddd dd MMM,, yyyy" style="display: block; width: 100%" @bind-Value="@user.LastLoginDate" Name="LastLoginDate" />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenFormField Text="Last Password Changed Date" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenDatePicker DateFormat="ddd dd MMM,, yyyy" style="display: block; width: 100%" @bind-Value="@user.LastPasswordChangedDate" Name="LastPasswordChangedDate" />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenFormField Text="Last Lockout Date" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenDatePicker DateFormat="ddd dd MMM,, yyyy" style="display: block; width: 100%" @bind-Value="@user.LastLockoutDate" Name="LastLockoutDate" />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenFormField Text="Failed Password Attempt Count" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@user.FailedPasswordAttemptCount" Name="FailedPasswordAttemptCount" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="FailedPasswordAttemptCount" Text="FailedPasswordAttemptCount is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Last Password Failure Date" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenDatePicker DateFormat="ddd dd MMM,, yyyy" style="display: block; width: 100%" @bind-Value="@user.LastPasswordFailureDate" Name="LastPasswordFailureDate" />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Is Branch Manager" Component="IsBranchManager" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@user.IsBranchManager" Name="IsBranchManager" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenFormField Text="Department Id" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@user.DepartmentId" Name="DepartmentId" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="DepartmentId" Text="DepartmentId is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="User Group Id" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@user.UserGroupId" Name="UserGroupId" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="UserGroupId" Text="UserGroupId is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Direct Manager Id" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@user.DirectManagerId" Name="DirectManagerId" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="DirectManagerId" Text="DirectManagerId is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Direct Manager Name" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@user.DirectManagerName" Name="DirectManagerName" />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenFormField Text="Full Name Lowered" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@user.FullNameLowered" Name="FullNameLowered" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="FullNameLowered" Text="FullNameLowered is required" />
+                  </Helper>
+            </RadzenFormField>
+          </RadzenStack>
+          <RadzenStack style="margin-top:1rem;" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick"  />
+          </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+

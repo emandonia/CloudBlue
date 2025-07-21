@@ -1,0 +1,197 @@
+﻿@inherits LayoutComponentBase 
+
+<RadzenComponents/>
+<Spinners></Spinners>
+<RadzenDialog/>
+<BlazoredToasts Position="ToastPosition.BottomLeft"
+                Timeout="5"
+                ErrorIcon="Error"
+                InfoIcon="Information"
+                IconType="IconType.FontAwesome"
+                SuccessClass=""
+                SuccessIcon="Success"
+                WarningIcon="Warning">
+</BlazoredToasts>
+<RadzenNotification/>
+
+<CascadingValue Value="this">
+
+
+    <RadzenLayout Visible="_visibleContent" style="grid-template-areas: 'rz-sidebar rz-header' 'rz-sidebar rz-body'; width: 100%">
+        <RadzenHeader >
+            <RadzenRow Style="margin-bottom: 0 !important; margin-top: 3px !important" JustifyContent="JustifyContent.Start" AlignItems="AlignItems.Center" Gap="0">
+                <RadzenColumn Size="12" SizeMD="4">
+                    <RadzenRow Style="margin-bottom: 0 !important; margin-left: 20px !important; margin-top: 3px !important;" JustifyContent="JustifyContent.Normal" AlignItems="AlignItems.Normal" Gap="0">
+
+                        <RadzenLink Path="/" Text="Home">
+                            <RadzenImage Path="images/HeaderLogo.png" style="height: 90px; width: 90px;">
+                            </RadzenImage>
+                        </RadzenLink>
+                    </RadzenRow>
+                </RadzenColumn>
+
+
+                <RadzenColumn Size="12" SizeMD="4">
+                    <RadzenRow Style="margin-bottom: 0 !important; margin-top: 3px !important" JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center" Gap="0">
+
+
+                        <div class="clock-container">
+                            <div class="clock">
+                                <span class="h12"></span>
+                                <span class="h3"></span>
+                                <span class="h6"></span>
+                                <span class="h9"></span>
+                                <div class="hour" style="transform: rotate(0deg);" id="hour-hand">
+                                    <div></div>
+                                </div>
+                                <div class="minute" style="transform: rotate(0deg);" id="minute-hand">
+                                    <div></div>
+                                </div>
+                                <div class="second" style="transform: rotate(0deg);" id="second-hand">
+                                    <div></div>
+                                </div>
+                                <span class="ctr"></span>
+                            </div>
+                        </div>
+
+
+                    </RadzenRow>
+                    <RadzenRow Style="margin-bottom: 0 !important; margin-top: 2px !important" JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center" Gap="0">
+
+                        <RadzenText Text="@_currentDate" TextStyle="TextStyle.Subtitle2" TagName="TagName.Auto"></RadzenText>
+
+                    </RadzenRow>
+                </RadzenColumn>
+
+                <RadzenColumn Size="12" SizeMD="4">
+                    <RadzenRow Style="margin-bottom: 0 !important; margin-right: 20px !important; margin-top: 3px !important;" JustifyContent="JustifyContent.Right" AlignItems="AlignItems.End" Gap="0">
+
+                        <RadzenStack Orientation="Orientation.Vertical">
+
+                            <RadzenProfileMenu>
+                                <Template>
+                                    <RadzenImage Path="@CurrentUser.UserImagePath" Style="border-radius: 50%; height: 30px; width: 30px;" Attributes="@(_onImageError)"/>
+
+                                </Template>
+                                <ChildContent>
+                                    <RadzenProfileMenuItem Text="Profile" Path="/profile" Icon="account_circle"></RadzenProfileMenuItem>
+                                    <RadzenProfileMenuItem Text="Logout" Path="/logout" Icon="logout">
+
+
+                                    </RadzenProfileMenuItem>
+
+                                </ChildContent>
+                            </RadzenProfileMenu>
+                            <RadzenText TextStyle="TextStyle.Caption" Style="font-size: 0.65rem !important; margin-top: 5px;" class="rz-text-truncate">
+                                <b>@_userName</b>
+                            </RadzenText>
+                            <RadzenText TextStyle="TextStyle.Overline" Style="font-size: 0.65rem !important; margin-top: -5px;" class="rz-text-truncate">
+                                <b>@_userPosition</b>
+                            </RadzenText>
+
+                        </RadzenStack>
+
+                    </RadzenRow>
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow JustifyContent="JustifyContent.Left" Style="margin-top: 2px !important; padding-left: 10px !important; padding-right: 10px !important;">
+
+
+                <RadzenColumn Size="12" SizeMD="12">
+                    <RadzenMenu ClickToOpen="false" Style="background-color: cornflowerblue !important">
+                        <RadzenMenuItem Text="Home" Path="/" Icon="home">
+                        </RadzenMenuItem>
+                        <RadzenMenuItem Text="Calls" Visible="@_callsMenuFlag" Icon="call">
+                            <RadzenMenuItem Text="Add Call" Visible="@_callsAddMenuFlag" Icon="add" Path="/calls/create">
+                            </RadzenMenuItem>
+                            <RadzenMenuItem Text="Manage Calls" Visible="@_callsManageMenuFlag" Icon="list" Path="/calls/manage"></RadzenMenuItem>
+
+                        </RadzenMenuItem>
+
+
+                        <RadzenMenuItem Text="Lead Tickets" Visible="@_leadTicketsMenuFlag" Icon="feed">
+
+                            <RadzenMenuItem Text="Add Lead Ticket" Visible="@_leadTicketsAddMenuFlag" Icon="add" Path="/lead-tickets/create"></RadzenMenuItem>
+                            <RadzenMenuItem Text="Manage Lead Tickets" Visible="@_leadTicketsManageMenuFlag" Icon="list" Path="/lead-tickets/manage"></RadzenMenuItem>
+
+                        </RadzenMenuItem>
+
+                        <RadzenMenuItem Text="Resale Requests" Visible="@_resaleRequestsMenuFlag" Icon="feed">
+
+                            <RadzenMenuItem Text="Buyer Request" Visible="@_buyerRequestsMenuFlag">
+
+                                <RadzenMenuItem Text="Add Buyer Request" Visible="@_buyerRequestsAddMenuFlag" Icon="add" Path="/buyer-requests/create"></RadzenMenuItem>
+                                <RadzenMenuItem Text="Manage Buyer Requests" Visible="@_buyerRequestsManageMenuFlag" Icon="list" Path="/buyer-requests/manage"></RadzenMenuItem>
+
+
+                            </RadzenMenuItem>
+                            <RadzenMenuItem Text="Seller Requests" Visible="@_sellerRequestsMenuFlag">
+
+                                <RadzenMenuItem Text="Add Seller Request" Visible="@_sellerRequestsAddMenuFlag" Icon="add" Path="/lead-tickets/create"></RadzenMenuItem>
+                                <RadzenMenuItem Text="Manage Seller Requests" Visible="@_sellerRequestsManageMenuFlag" Icon="list" Path="/lead-tickets/manage"></RadzenMenuItem>
+                            </RadzenMenuItem>
+
+                        </RadzenMenuItem>
+
+                        <RadzenMenuItem Text="Tcrs" Visible="@_tcrsMenuFlag" Icon="feed">
+
+                            <RadzenMenuItem Text="Prime Tcrs" Visible="@_primeTcrsMenuFlag">
+
+                                <RadzenMenuItem Text="Add Prime Tcr" Visible="@_primeTcrsAddMenuFlag" Icon="add" Path="/prime-tcrs/create/0"></RadzenMenuItem>
+                                <RadzenMenuItem Text="Manage Prime Tcrs" Visible="@_primeTcrsManageMenuFlag" Icon="list" Path="/prime-tcrs/manage"></RadzenMenuItem>
+
+
+                            </RadzenMenuItem>
+                            <RadzenMenuItem Text="Resale Tcrs" Visible="@_resaleTcrsMenuFlag">
+
+                                <RadzenMenuItem Text="Add Resale Tcr" Visible="@_resaleTcrsAddMenuFlag" Icon="add" Path="/resale-tcrs/create"></RadzenMenuItem>
+                                <RadzenMenuItem Text="Manage Resale Tcrs" Visible="@_resaleTcrsManageMenuFlag" Icon="list" Path="/resale-tcrs/manage"></RadzenMenuItem>
+                            </RadzenMenuItem>
+
+                        </RadzenMenuItem>
+                        <RadzenMenuItem Text="Administration" Visible="@_adminMenuFlag" Icon="admin_panel_settings">
+                            <RadzenMenuItem Text="Manage Privileges" Visible="@_managePrivilegesMenuFlag" Icon="key" Path="/entity-privileges/manage"></RadzenMenuItem>
+                            <RadzenMenuItem Text="Manage Users" Visible="@_manageUsersMenuFlag" Icon="key" Path="/users/manage"></RadzenMenuItem>
+
+                            <RadzenMenuItem Text="Manage Lookups" Visible="@_manageLookupsMenuFlag" Icon="event_list">
+
+
+                                <RadzenMenuItem Text="Marketing Agencies" Icon="folder_managed" Path="/lookups/marketing-agencies" />
+                                <RadzenMenuItem Text="Locations" Icon="folder_managed" Path="/lookups/locations" />@* 
+                                <RadzenMenuItem Text="Companies" Icon="folder_managed" Path="/lookups-positions/manage"/>
+                                <RadzenMenuItem Text="Branches" Icon="folder_managed" Path="/lookups-positions/manage"/> *@
+
+
+                            </RadzenMenuItem>
+                       
+                        </RadzenMenuItem>
+                        <RadzenMenuItem Text="My Profile" Path="/profile" Icon="event_list">
+                        </RadzenMenuItem>
+                    </RadzenMenu>
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenHeader>
+        <RadzenBody >
+            <RadzenRow Visible="true" class="rz-mx-auto rz-px-4 rz-pt-2 rz-pt-md-4 rz-pt-lg-6 rz-pt-xl-12 rz-pb-2 rz-pb-lg-12" Style="max-width: 100%;">
+                <RadzenColumn Size="12">
+                    @Body
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenBody>
+
+
+    </RadzenLayout>
+
+</CascadingValue>
+
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+
+
+<script>
+
+</script>

@@ -1,0 +1,36 @@
+@page "/add-franchise-company"
+
+<PageTitle>Add FranchiseCompany</PageTitle>
+    <RadzenColumn SizeMD=12>
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save FranchiseCompany</RadzenAlert>
+        <RadzenTemplateForm TItem="NewCloudBlueMirror.Models.CloudBlue.FranchiseCompany" Data="@franchiseCompany" Visible="@(franchiseCompany != null && canEdit)" Submit="@FormSubmit">
+          <RadzenStack>
+            <RadzenFormField Text="Country Id" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@franchiseCompany.CountryId" Name="CountryId" />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenFormField Text="Company Name" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@franchiseCompany.CompanyName" Name="CompanyName" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="CompanyName" Text="CompanyName is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Is Insider" Component="IsInsider" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@franchiseCompany.IsInsider" Name="IsInsider" />
+                </RadzenColumn>
+            </RadzenRow>
+          </RadzenStack>
+          <RadzenStack style="margin-top:1rem;" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick"  />
+          </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+

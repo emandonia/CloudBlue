@@ -1,0 +1,64 @@
+@page "/add-outside-broker"
+
+<PageTitle>Add OutsideBroker</PageTitle>
+    <RadzenColumn SizeMD=12>
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save OutsideBroker</RadzenAlert>
+        <RadzenTemplateForm TItem="NewCloudBlueMirror.Models.CloudBlue.OutsideBroker" Data="@outsideBroker" Visible="@(outsideBroker != null && canEdit)" Submit="@FormSubmit">
+          <RadzenStack>
+            <RadzenFormField Text="Outside Broker Pk" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@outsideBroker.OutsideBrokerPk" Name="OutsideBrokerPk" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="OutsideBrokerPk" Text="OutsideBrokerPk is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Outside Broker Name" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@outsideBroker.OutsideBrokerName" Name="OutsideBrokerName" />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenFormField Text="Commission Percentage" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@outsideBroker.CommissionPercentage" Name="CommissionPercentage" />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Is Per Sales Value" Component="IsPerSalesValue" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@outsideBroker.IsPerSalesValue" Name="IsPerSalesValue" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenFormField Text="User Name" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@outsideBroker.UserName" Name="UserName" />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenFormField Text="Password Salt" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@outsideBroker.PasswordSalt" Name="PasswordSalt" />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenFormField Text="Password Hash" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@outsideBroker.PasswordHash" Name="PasswordHash" />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Is Active" Component="IsActive" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@outsideBroker.IsActive" Name="IsActive" />
+                </RadzenColumn>
+            </RadzenRow>
+          </RadzenStack>
+          <RadzenStack style="margin-top:1rem;" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick"  />
+          </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+

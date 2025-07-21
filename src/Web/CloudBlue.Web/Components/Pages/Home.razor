@@ -1,0 +1,169 @@
+﻿@page "/"
+
+
+<RadzenColumn SizeMD="12">
+
+      
+        <RadzenColumn Size="12" SizeMD="12">
+            <RadzenPanel AllowCollapse="true"class="rz-my-10 rz-mx-auto" Style="width: 99%;">
+    <HeaderTemplate>
+        <RadzenText TextStyle="TextStyle.H6" class="rz-display-flex rz-align-items-center rz-m-0">
+            <RadzenIcon Icon="account_box" class="rz-me-1" /><b>Notifications</b>
+        </RadzenText>
+    </HeaderTemplate>
+    <ChildContent>
+       <RadzenFieldset AllowCollapse="true">
+        <HeaderTemplate>
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+                <RadzenIcon Icon="search" class="titleSpan"/>
+                <b>
+                    <span class="titleSpan">Lead Ticket</span>
+                </b>
+            </RadzenStack>
+        </HeaderTemplate>
+        <ChildContent>
+        
+        
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+       
+      
+            
+          
+                        @foreach (var item in _dashboardContent.LeadTicketsNotifications.OrderBy(z => z.Order))
+                        {
+                            <RadzenColumn  Size="12" SizeMD="2">
+                                    <RadzenCard @onclick="() => OnChange(item.LinkUrl)" Style="cursor:pointer;width:100%" class="rz-mt-4 rz-shadow-10">
+                                    <RadzenStack Orientation="Orientation.Vertical">
+                                        <RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.Body1"> @item.Label </RadzenText>
+                                            <RadzenText Style="color:#6495ed!important" TextStyle="TextStyle.H3" TextAlign="TextAlign.Center">@item.Count </RadzenText>
+                                        <RadzenProgressBar ProgressBarStyle="@((ProgressBarStyle)item.StatusBadgeStyle)" Value="100" ShowValue="false" Mode="ProgressBarMode.Determinate" />
+
+                                    </RadzenStack>
+
+                                </RadzenCard>
+                            </RadzenColumn>
+
+                        }
+
+
+
+                         
+                    </RadzenRow>
+
+              </ChildContent>
+                </RadzenFieldset>
+                <RadzenFieldset AllowCollapse="true">
+                    <HeaderTemplate>
+                        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+                            <RadzenIcon Icon="search" class="titleSpan" />
+                            <b>
+                                <span class="titleSpan">Prime Tcrs</span>
+                            </b>
+                        </RadzenStack>
+                    </HeaderTemplate>
+                    <ChildContent>
+
+
+                        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+
+
+
+                            @foreach (var item in _dashboardContent.PrimeTcrsNotifications.OrderBy(z => z.Order))
+                            {
+                                <RadzenColumn Size="12" SizeMD="2">
+                                    <RadzenCard @onclick="() => OnChange(item.LinkUrl)" Style="cursor:pointer;width:100%" class="rz-mt-4 rz-shadow-10">
+                                        <RadzenStack Orientation="Orientation.Vertical">
+                                            <RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.Body1"> @item.Label </RadzenText>
+                                            <RadzenText Style="color:#6495ed!important" TextStyle="TextStyle.H3" TextAlign="TextAlign.Center">@item.Count </RadzenText>
+                                            <RadzenProgressBar ProgressBarStyle="@((ProgressBarStyle)item.StatusBadgeStyle)" Value="100" ShowValue="false" Mode="ProgressBarMode.Determinate" />
+
+                                        </RadzenStack>
+
+                                    </RadzenCard>
+                                </RadzenColumn>
+
+                            }
+
+
+
+
+                        </RadzenRow>
+
+                    </ChildContent>
+                </RadzenFieldset>
+                <RadzenRow AlignItems="AlignItems.Center" Visible="false" JustifyContent="JustifyContent.Center">
+
+
+
+ 
+                        <RadzenColumn Size="12" SizeMD="3">
+                            <RadzenCard  Style="cursor:pointer;width:100%" class="rz-mt-4 rz-shadow-10">
+                            <RadzenStack Orientation="Orientation.Vertical">
+
+                            <RadzenProgressBarCircular Style="left:50%" ProgressBarStyle="ProgressBarStyle.Danger" Value="20" ShowValue="true" Mode="ProgressBarMode.Determinate" />
+
+
+                    
+                                    <RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.Body1"> Total Achievement </RadzenText>
+                                <RadzenText Style="color:#6495ed!important" TextStyle="TextStyle.H4" TextAlign="TextAlign.Center">100,000,000 </RadzenText>
+                                    
+
+                                </RadzenStack>
+
+                            </RadzenCard>
+                        </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="1">
+                    
+        </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="3">
+                        <RadzenCard Style="cursor:pointer;width:100%" class="rz-mt-4 rz-shadow-10">
+                            <RadzenStack Orientation="Orientation.Vertical">
+
+
+                                <RadzenProgressBarCircular Style="left:50%" ProgressBarStyle="ProgressBarStyle.Warning" Value="70" ShowValue="true" Mode="ProgressBarMode.Determinate" />
+
+
+                   
+                                <RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.Body1"> Total Contracts </RadzenText>
+                                <RadzenText Style="color:#6495ed!important" TextStyle="TextStyle.H4" TextAlign="TextAlign.Center">500,000,000 </RadzenText>
+
+
+                            </RadzenStack>
+
+                        </RadzenCard>
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="1">
+
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="3">
+                        <RadzenCard Style="cursor:pointer;width:100%" class="rz-mt-4 rz-shadow-10">
+                      
+
+                            <RadzenStack Orientation="Orientation.Vertical">
+                                <RadzenProgressBarCircular Style="left:50%" ProgressBarStyle="ProgressBarStyle.Success" Value="95" ShowValue="true" Mode="ProgressBarMode.Determinate" />
+
+                                <RadzenText TextAlign="TextAlign.Center" TextStyle="TextStyle.Body1"> Confirmed Contracts </RadzenText>
+                                <RadzenText Style="color:#6495ed!important" TextStyle="TextStyle.H4" TextAlign="TextAlign.Center">80,000,000 </RadzenText>
+
+
+                            </RadzenStack>
+
+                        </RadzenCard>
+                    </RadzenColumn>
+
+
+
+
+                </RadzenRow>
+
+</ChildContent>
+            </RadzenPanel>
+        </RadzenColumn>
+         
+
+
+
+
+     
+</RadzenColumn>

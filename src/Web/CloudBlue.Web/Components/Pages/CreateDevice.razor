@@ -1,0 +1,95 @@
+﻿@using CloudBlue.Domain.DomainModels
+@using CloudBlue.Domain.GenericTypes
+<RadzenStack Gap="1.5rem">
+    <Spinners></Spinners>
+
+
+    <RadzenTemplateForm TItem="ClientPhoneModel" Data="@_newDevice" Submit="@AddDevice">
+        <RadzenFieldset AllowCollapse="false">
+
+            <HeaderTemplate>
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+                    <RadzenIcon Icon="search" class="titleSpan"/>
+                    <b>
+                        <span class="titleSpan">New Device Info</span>
+                    </b>
+                </RadzenStack>
+            </HeaderTemplate>
+
+            <ChildContent>
+                <RadzenRow JustifyContent="JustifyContent.Center">
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="3">
+                            <RadzenFormField Variant="Variant.Outlined" Text="Device Type">
+
+                                <RadzenDropDown Change="DeviceTypeChanged" Name="DeviceTypeId" @bind-Value="@_newDevice.DeviceTypeId" Data="@DeviceTypesList" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Device Type" Style="width: 100%;"/>
+                                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="DeviceTypeId" ComponentProperty="Value"/>
+
+                            </RadzenFormField>
+                        </RadzenColumn>
+
+
+                        <RadzenColumn Visible="@(!_isEmail && _showAll)" Size="12" SizeMD="3">
+                            <RadzenFormField Variant="Variant.Outlined" Text="Country Code">
+
+                                <RadzenDropDown AllowClear="true" Name="CountryId" @bind-Value="@_newDevice.CountryId" Data="@Countries" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Country" Style="width: 100%;">
+                                    <Template Context="newcontext">
+                                        @{
+                                            var val = newcontext as LookupItem<int>;
+                                        }
+                                        <span>@($"({val.ExtraId}) {val.ItemName}")</span>
+                                         
+                                    </Template> 
+                                </RadzenDropDown>
+                                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="CountryId" ComponentProperty="Value"/>
+
+                            </RadzenFormField>
+                        </RadzenColumn>
+
+                        <RadzenColumn Size="12" Visible="@(!_isEmail && _showAll)" SizeMD="3">
+
+                            <RadzenFormField Text="Area Code" Variant="Variant.Outlined">
+                                <RadzenTextBox MaxLength="4" Name="AreaCode" @bind-Value="@_newDevice.AreaCode"/>
+                                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="AreaCode"/>
+
+
+                            </RadzenFormField>
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" Visible="@(!_isEmail && _showAll)" SizeMD="3">
+
+                            <RadzenFormField Text="Phone" Variant="Variant.Outlined">
+                                <RadzenTextBox Name="Phone" MaxLength="8" @bind-Value="@_newDevice.Phone"/>
+                                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="Phone"/>
+
+                            </RadzenFormField>
+                        </RadzenColumn>
+
+                        <RadzenColumn Size="12" Visible="@(_isEmail && _showAll)" SizeMD="3">
+
+                            <RadzenFormField Text="Email" Variant="Variant.Outlined">
+                                <RadzenTextBox Name="Email" MaxLength="120" @bind-Value="@_newDevice.Email"/>
+                                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="Email"/>
+
+                            </RadzenFormField>
+                        </RadzenColumn>
+
+
+                    </RadzenStack>
+
+                </RadzenRow>
+                <RadzenRow>
+                    <RadzenButton ButtonType="ButtonType.Submit" Text="Save" Style="width: 80px;"/>
+                    <RadzenButton Text="Close" Click="@Close" ButtonStyle="ButtonStyle.Light"/>
+                </RadzenRow>
+
+
+            </ChildContent>
+
+        </RadzenFieldset>
+
+    </RadzenTemplateForm>
+</RadzenStack>
+
+@code {
+
+}

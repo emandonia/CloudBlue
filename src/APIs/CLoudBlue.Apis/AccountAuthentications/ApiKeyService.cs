@@ -1,0 +1,23 @@
+﻿using System.Security.Cryptography;
+
+namespace CLoudBlue.Apis.AccountAuthentications;
+
+internal class ApiKeyService : IApiKeyService
+{
+    private const string Prefix = "Mimo-";
+    private const int NumberOfSecureBytesToGenerate = 64;
+    private const int LengthOfKey = 64;
+
+    public string GenerateApiKey()
+    {
+        var bytes = RandomNumberGenerator.GetBytes(NumberOfSecureBytesToGenerate);
+
+        var base64String = Convert.ToBase64String(bytes)
+            .Replace("+", "-")
+            .Replace("/", "_");
+
+        var keyLength = LengthOfKey - Prefix.Length;
+
+        return Prefix + base64String[..keyLength];
+    }
+}

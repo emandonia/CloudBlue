@@ -1,0 +1,208 @@
+﻿html,
+body {
+    width: 97%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #86add9;
+    background-attachment: fixed;
+    background-image: url('../images/Background2.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    align-content: center;
+    align-items: center;
+}
+.rz-form-field-label {
+    font-size: 0.9rem!important;
+}
+.rz-form-field-start {
+    height: 2.25rem!important;
+}
+.floating-button2 {
+    width: 130px;
+    height: 130px;
+    position: absolute;
+    background-color: green;
+}
+.floating-button {
+    position: fixed; /* Keeps the button floating */
+    bottom: 20px; /* Distance from the bottom of the viewport */
+    right: 20px; /* Distance from the right side of the viewport */
+    z-index: 1000; /* Ensures the button stays on top */
+
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.rz-data-grid .rz-data-row:nth-child(odd) {
+    background-color: #e0e0e0; /* Light color for odd rows */
+}
+
+.rz-data-grid .rz-data-row:nth-child(even) {
+    background-color: #ffffff; /* White color for even rows */
+}
+
+.datagrid-custom-header {
+    background-color: #86add9 !important; /* Replace with your desired color */
+    color: #ffffff; /* Optional: Set text color for contrast */
+    border: none !important;
+    border-radius: 5px !important; /* Rounded corners */
+    padding: 8px !important;
+    text-align: center !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2) !important; /* Button-like shadow */
+    transition: transform 0.2s, box-shadow 0.2s !important;
+}
+    /*.rz-datatable-even > td {
+    background-color: rgb(186 184 200 / 0.05)!important;
+}*/
+    .datagrid-custom-header:hover {
+        background-color: #669ac3 !important; /* Darker shade on hover */
+        box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3) !important;
+        transform: translateY(-2px) !important; /* Slight lift on hover */
+    }
+
+    /* Active effect for a pressed look */
+    .datagrid-custom-header:active {
+        background-color: #003f7f !important; /* Even darker shade */
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2) !important;
+        transform: translateY(1px) !important;
+    }
+
+.rz-panel-titlebar {
+    flex-direction: row-reverse;
+    justify-content: left;
+}
+
+.rz-dialog {
+    background-color: #e3eaf2;
+}
+
+.rz-dialog-titlebar {
+    font-size: 1.5 rem;
+    background-color: #e3eaf2;
+}
+
+.rz-message {
+    margin-top: 55px;
+    margin-bottom: 15px;
+    z-index: 999;
+}
+
+.yellowMsg {
+    background: #fff4b2;
+    float: left;
+    width: 938px;
+    margin: 0px 0px 5px 0px;
+    text-align: left;
+    color: #6e411e;
+    padding: 5px;
+    font-size: 12px;
+    border: solid 1px #dbce7f;
+}
+
+.clientVipIcon {
+    color: #1E90FF;
+    cursor: pointer;
+    background-image: url('../images/vipCustomer.png');
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 25px; /* Adjust based on image size */
+    background-size: 25px 25px; /* Size the background image */
+}
+
+.clientPotentialIcon {
+    color: #1E90FF;
+    cursor: pointer;
+    background-image: url('../images/Potential.png');
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 25px; /* Adjust based on image size */
+    background-size: 25px 25px; /* Size the background image */
+}
+.valid.modified:not([type=checkbox]) {
+    outline: 2px solid #26b050 !important;
+}
+
+.requiredIcon {
+    color: red;
+    cursor: pointer;
+    background-image: url('../images/required-1.png');
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 15px; /* Adjust based on image size */
+    background-size: 15px 15px; /* Size the background image */
+}
+
+
+.liLeadSourceIcon {
+    color: #1E90FF;
+    cursor: pointer;
+    background-image: url('../images/leadsource.png');
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 25px; /* Adjust based on image size */
+    background-size: 25px 25px; /* Size the background image */
+}
+
+.liTopManagerIcon {
+    background-image: url('../images/topmanager.png');
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 25px; /* Adjust based on image size */
+    background-size: 25px 25px; /* Size the background image */
+}
+
+.liManagerIcon {
+    background-image: url('../images/manager.png');
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 25px; /* Adjust based on image size */
+    background-size: 25px 25px; /* Size the background image */
+}
+
+.liAgentIcon {
+    background-image: url('../images/agent.png');
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 25px; /* Adjust based on image size */
+    background-size: 25px 25px; /* Size the background image */
+}
+
+.rz-row {
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+.rz-fieldset {
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+.rz-fieldset {
+    border: 1px solid #242c30;
+    border-radius: 0;
+}
+
+.rz-fieldset-toggler {
+    color: #1E90FF;
+    cursor: pointer;
+    font-size: 1rem important;
+}
+
+.titleSpan {
+    color: #1E90FF;
+    cursor: pointer;
+}
+
+.rz-fieldset-toggler.rzi-minus:before {
+    content: "▼";
+}
+
+.rz-fieldset-toggler.rzi-plus:before {
+    content: "▶";
+}

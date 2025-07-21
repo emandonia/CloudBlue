@@ -1,0 +1,204 @@
+﻿@using CloudBlue.Domain.DomainModels.Users
+@using CloudBlue.Domain.Enums
+@inject DialogService DialogService
+
+<style>
+    .rz-alert-md {
+        --rz-alert-gap: 0.2rem !important;
+        --rz-alert-margin: 0.2rem  !important;
+        --rz-alert-padding: 0.2rem !important;
+        --rz-alert-message-margin: 0.2rem !important;
+        --rz-alert-icon-margin: 0.2rem !important;
+    }
+
+    .rz-row {
+        margin-bottom: 0px !important;
+        margin-top: 0px !important;
+    }
+</style>
+<RadzenStack Gap="0.25rem">
+    <Spinners></Spinners>
+
+    <RadzenTemplateForm TItem="UpdateUserModel" Data="@_model" Submit="@ApplyActionAsync">
+
+
+        <RadzenFieldset AllowCollapse="false">
+
+
+            <ChildContent>
+
+
+                <RadzenRow JustifyContent="JustifyContent.Center" lignItems="AlignItems.Center">
+
+                    <RadzenColumn Size="12" Visible="@(Action == ManageUserActions.ChangePassword)" SizeMD="6">
+                        <RadzenFormField Text="Password" Variant="Variant.Outlined" Style="width: 100%;">
+                            <Start>
+
+                                <RadzenIcon class="requiredIcon"/>
+
+
+                            </Start>
+                            <ChildContent>
+                                <RadzenTextBox style="display: block; width: 100%" @bind-Value="@_model.Password" Name="Password"/>
+                                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="Password" ComponentProperty="Value"/>
+
+                            </ChildContent>
+                        </RadzenFormField>
+
+
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" Visible="@(Action == ManageUserActions.UpdatePosition)" SizeMD="6">
+                        <RadzenFormField Text="User Position" Variant="Variant.Outlined" Style="width: 100%;">
+                            <Start>
+
+                                <RadzenIcon class="requiredIcon"/>
+
+
+                            </Start>
+                            <ChildContent>
+                                <RadzenDropDown AllowClear="true" Name="SelectedItemId" @bind-Value="@_model.SelectedItemId" Data="@LookupItems" TextProperty="ItemName" ValueProperty="ItemId" Placeholder="Select One" Style="width: 100%;"/>
+                                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="SelectedItemId" ComponentProperty="Value"/>
+                            </ChildContent>
+                        </RadzenFormField>
+
+
+                    </RadzenColumn>
+
+
+                    <RadzenColumn Size="12" Visible="@(Action == ManageUserActions.UpdatePosition || Action == ManageUserActions.SetResigned)" SizeMD="6">
+                        <RadzenFormField Text="Date" Variant="Variant.Outlined" Style="width: 100%;">
+                            <Start>
+
+                                <RadzenIcon class="requiredIcon"/>
+
+
+                            </Start>
+                            <ChildContent>
+                                <RadzenDatePicker DateFormat="dd/MM/yyyy" AllowInput="false" AllowClear="true" style="display: block; width: 100%" @bind-Value="@_model.PromotionDate" Name="PromotionDate"/>
+                                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="PromotionDate" ComponentProperty="Value"/>
+                            </ChildContent>
+                        </RadzenFormField>
+
+
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" Visible="@(Action == ManageUserActions.UpdateDirectManager)" SizeMD="6">
+                        <RadzenFormField Text="Direct Manager" Variant="Variant.Outlined" Style="width: 100%;">
+                            <Start>
+
+                                <RadzenIcon class="requiredIcon"/>
+
+
+                            </Start>
+                            <ChildContent>
+                                <RadzenDropDown AllowClear="true" Name="SelectedItemId" @bind-Value="@_model.SelectedItemId" Data="@LookupItems" TextProperty="ItemName" ValueProperty="ItemId" Placeholder="Select One" Style="width: 100%;"/>
+                                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="SelectedItemId" ComponentProperty="Value"/>
+                            </ChildContent>
+                        </RadzenFormField>
+
+
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" Visible="@(Action == ManageUserActions.EditEmail)" SizeMD="6">
+                        <RadzenFormField Text="Email" Variant="Variant.Outlined" Style="width: 100%;">
+                            <Start>
+
+                                <RadzenIcon class="requiredIcon"/>
+
+
+                            </Start>
+                            <ChildContent>
+                                <RadzenTextBox style="display: block; width: 100%" @bind-Value="@_model.Email" Name="Email"/>
+                                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="Email" ComponentProperty="Value"/>
+                            </ChildContent>
+                        </RadzenFormField>
+
+
+                    </RadzenColumn>
+
+
+                    <RadzenColumn Size="12" Visible="@(Action == ManageUserActions.EditUsername)" SizeMD="6">
+                        <RadzenFormField Text="Username" Variant="Variant.Outlined" Style="width: 100%;">
+                            <Start>
+
+                                <RadzenIcon class="requiredIcon"/>
+
+
+                            </Start>
+                            <ChildContent>
+                                <RadzenTextBox style="display: block; width: 100%" @bind-Value="@_model.UserName" Name="UserName"/>
+                                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="UserName" ComponentProperty="Value"/>
+                            </ChildContent>
+                        </RadzenFormField>
+
+
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" Visible="@(Action == ManageUserActions.EditFullName)" SizeMD="6">
+                        <RadzenFormField Text="Full Name" Variant="Variant.Outlined" Style="width: 100%;">
+                            <Start>
+
+                                <RadzenIcon class="requiredIcon" />
+
+
+                            </Start>
+                            <ChildContent>
+                                <RadzenTextBox style="display: block; width: 100%" @bind-Value="@_model.FullName" Name="FullName" />
+                                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="FullName" ComponentProperty="Value" />
+                            </ChildContent>
+                        </RadzenFormField>
+
+
+                    </RadzenColumn>
+
+
+                    <RadzenColumn Size="12" SizeMD="3" Visible="@(Action == ManageUserActions.EditMobile)">
+
+                        <RadzenFormField Text="Area Code" Variant="Variant.Outlined">
+                            <Start>
+
+                                <RadzenIcon class="requiredIcon"/>
+
+
+                            </Start>
+                            <ChildContent>
+
+                                <RadzenTextBox MaxLength="4" Name="AreaCode" @bind-Value="@_model.UserPhone.AreaCode"/>
+                                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="AreaCode"/>
+
+                            </ChildContent>
+                        </RadzenFormField>
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="3" Visible="@(Action == ManageUserActions.EditMobile)">
+
+                        <RadzenFormField Text="Phone" Variant="Variant.Outlined">
+                            <Start>
+
+                                <RadzenIcon class="requiredIcon"/>
+
+
+                            </Start>
+                            <ChildContent>
+
+                                <RadzenTextBox Name="Phone" MaxLength="8" @bind-Value="@_model.UserPhone.Phone"/>
+                                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="Phone"/>
+                            </ChildContent>
+                        </RadzenFormField>
+                    </RadzenColumn>
+
+
+                </RadzenRow>
+
+            </ChildContent>
+        </RadzenFieldset>
+
+
+        <RadzenRow JustifyContent="JustifyContent.Center" lignItems="AlignItems.Center" Style="margin-top: 20px !important">
+            <RadzenButton ButtonType="ButtonType.Submit" Disabled="@_isDisabled" Text="Apply" Style="width: 80px;"/>
+            <RadzenButton Text="Close" Click="@Close" ButtonStyle="ButtonStyle.Light"/>
+        </RadzenRow>
+
+
+    </RadzenTemplateForm>
+</RadzenStack>

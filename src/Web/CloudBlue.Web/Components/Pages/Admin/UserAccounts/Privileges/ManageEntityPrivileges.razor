@@ -1,0 +1,143 @@
+@page "/entity-privileges/manage"
+@using CloudBlue.Domain.DomainModels.Filtration.Interfaces
+@using CloudBlue.Domain.DomainModels.Users
+
+<style>
+   /*  .rz-grid-table {
+        width: 1095px !important;
+    } */
+
+        .rz-grid-table td .rz-cell-data {
+            overflow-wrap: break-word;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+</style>
+<PageTitle>Manage Entity Privileges</PageTitle>
+<RadzenStack>
+    
+    
+<RadzenTemplateForm TItem="EntityPrivilegesFiltersModel" Data="@_filters">
+
+
+<RadzenPanel AllowCollapse="true" class="rz-my-10 rz-mx-auto">
+    <HeaderTemplate>
+        <RadzenText TextStyle="TextStyle.H6" class="rz-display-flex rz-align-items-center rz-m-0">
+            <RadzenIcon Icon="filter_alt" class="rz-me-1"/><b>Filters</b>
+        </RadzenText>
+    </HeaderTemplate>
+
+    <ChildContent>
+
+
+
+                <RadzenFieldset AllowCollapse="false">
+                     <ChildContent>
+ 
+                       
+                          
+                        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+                            <RadzenColumn Size="12" SizeMD="4">
+                                <RadzenFormField Text="Privilege Category" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <RadzenDropDown AllowClear="true" Name="PrivilegeCategoryId" Change="PrivilegeCategoryChanged" Data="@_privilegeCategories" TextProperty="ItemName" ValueProperty="ItemId" @bind-Value="@_filters.PrivilegeCategoryId" Style="width: 100%;" />
+
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="4">
+                                <RadzenFormField Text="Privilege" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <RadzenDropDown AllowClear="true" Name="PrivilegeId" Data="@_privileges" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @bind-Value="@_filters.PrivilegeId" Style="width: 100%;" />
+
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="4">
+                                <RadzenFormField Text="Privilege Scope" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <RadzenDropDown AllowClear="true" Name="PrivilegeScopeId" Data="@_privilegeScopes" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @bind-Value="@_filters.PrivilegeScopeId" Style="width: 100%;" />
+
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                        </RadzenRow>
+
+                        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+                            <RadzenColumn Size="12" SizeMD="6">
+                                <RadzenFormField Text="Entity Type" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <RadzenDropDown AllowClear="true" Change="EntityTypeChanged" Name="EntityTypeId" Data="@_entityTypes" TextProperty="ItemName" ValueProperty="ItemId" @bind-Value="@_filters.EntityTypeId" Style="width: 100%;" />
+
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="6" Visible="@_showEntityList">
+                                <RadzenFormField Text="@_entityLabel" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                    <RadzenDropDown AllowClear="true" Name="EntityId" Data="@_privilegeEntities" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" AllowVirtualization="true" VirtualizationOverscanCount="5" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" @bind-Value="@_filters.EntityId" Style="width: 100%;" />
+
+                                </RadzenFormField>
+
+
+                            </RadzenColumn>
+                         </RadzenRow>
+
+
+                     </ChildContent>
+                </RadzenFieldset>
+
+                <RadzenButton ButtonType="ButtonType.Submit" Shade="Shade.Lighter" Click="@Search" Text="Search" ButtonStyle="ButtonStyle.Secondary" />
+                @* 
+<RadzenButton ButtonType="ButtonType.Submit" class="floating-button" Shade="Shade.Lighter" Click="@Search" Text="Search" ButtonStyle="ButtonStyle.Primary"/> *@
+                <RadzenButton Shade="Shade.Lighter" Click="@ResetFilters" Text="Reset Filters" ButtonStyle="ButtonStyle.Primary" />
+
+            </ChildContent>
+</RadzenPanel>
+</RadzenTemplateForm>
+     
+<RadzenRow>
+    <RadzenColumn SizeMD=12>
+            <RadzenButton Icon="add_circle_outline" Text="Add" Click="@AddButtonClick" Variant="Variant.Flat" />
+        <RadzenDataGrid @ref="grid0" ColumnWidth="200px" Count="_totalNumber" AllowFiltering="false" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[] { 5, 10, 20, 30 })
+                        Data="@_items" LoadData="LoadData" TItem="EntityPrivilegeItemForList">
+            <Columns>
+                <RadzenDataGridColumn  HeaderCssClass="datagrid-custom-header" TItem="EntityPrivilegeItemForList" Property="@nameof(EntityPrivilegeItemForList.Id)" Title="Id">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn  HeaderCssClass="datagrid-custom-header" TItem="EntityPrivilegeItemForList" Property="@nameof(EntityPrivilegeItemForList.PrivilegeName)" Title="Privilege">
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn  HeaderCssClass="datagrid-custom-header" TItem="EntityPrivilegeItemForList" Property="@nameof(EntityPrivilegeItemForList.EntityName)" Title="Entity">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn  HeaderCssClass="datagrid-custom-header" TItem="EntityPrivilegeItemForList" Property="@nameof(EntityPrivilegeItemForList.PrivilegeScopeName)" Title="Privilege Scope">
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn  HeaderCssClass="datagrid-custom-header" TItem="EntityPrivilegeItemForList" Property="@nameof(EntityPrivilegeItemForList.PrivilegeEntityTypeName)" Title="Entity Type">
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn  HeaderCssClass="datagrid-custom-header" TItem="EntityPrivilegeItemForList" Property="@nameof(EntityPrivilegeItemForList.PrivilegeCategoryName)" Title="Privilege Category">
+                </RadzenDataGridColumn>
+                    <RadzenDataGridColumn  HeaderCssClass="datagrid-custom-header" Title="Remove" Sortable="true" Filterable="false" TItem="EntityPrivilegeItemForList">
+                        <Template Context="entityPrivilegeItemForList">
+                            <RadzenButton 
+                                          Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" aria-label="Delete"
+                                          Click="@(_ => RemoveItem(entityPrivilegeItemForList.Id))"
+                                          @onclick:stopPropagation="true">
+
+                            </RadzenButton>
+                        </Template>
+
+
+
+                    </RadzenDataGridColumn>
+            </Columns>
+
+        </RadzenDataGrid>
+
+    </RadzenColumn>
+  </RadzenRow>
+</RadzenStack>

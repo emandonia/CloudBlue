@@ -1,0 +1,69 @@
+AgentLastActivityDate, Filterable:false, Sortable:true, Visible:false
+
+AgentLastEventComment, Filterable:false, Sortable:false, Visible:false
+
+AgentLastEventContactingType, Filterable:false, Sortable:false, Visible:false
+
+AgentLastEventDateTime, Filterable:false, Sortable:false, Visible:false
+
+AgentLastEventType, Filterable:false, Sortable:false, Visible:false
+
+AllowedActions, Filterable:true, Sortable:true, Visible:false
+
+AlreadyExistCount, Filterable:true, Sortable:true, Visible:false
+
+BranchName, Filterable:false, Sortable:false, Visible:false
+
+BudgetFrom, Filterable:false, Sortable:false, Visible:false
+
+CallBackDate, Filterable:false, Sortable:false, Visible:false
+
+CallLaterCount, Filterable:true, Sortable:true, Visible:false
+
+CallLaterDistinctCount, Filterable:true, Sortable:true, Visible:false
+
+ClientName, Filterable:false, Sortable:false, Visible:true
+
+ClientPhone, Filterable:false, Sortable:false, Visible:true
+
+ClientType, Filterable:false, Sortable:false, Visible:false
+
+CreatedBy, Filterable:false, Sortable:false, Visible:false
+
+CreationDate, Filterable:false, Sortable:true, Visible:true
+
+CurrentAgent, Filterable:false, Sortable:false, Visible:true
+
+DirectManagerName, Filterable:false, Sortable:false, Visible:false
+
+FormName, Filterable:false, Sortable:false, Visible:false
+
+HoursToGetInProgress, Filterable:true, Sortable:true, Visible:false
+
+		Id, Filterable:false, Sortable:true, Visible:true Done
+
+KnowSource, Filterable:false, Sortable:false, Visible:false
+LastAssignedDate, Filterable:false, Sortable:true, Visible:false
+LastEventComment, Filterable:false, Sortable:false, Visible:false
+LastEventCreationDateTime, Filterable:false, Sortable:false, Visible:false
+LastEventProcess, Filterable:false, Sortable:false, Visible:false
+LeadSource, Filterable:false, Sortable:true, Visible:false
+LeadTicketNote, Filterable:false, Sortable:false, Visible:false
+LeadTicketStatus, Filterable:false, Sortable:true, Visible:true
+Location, Filterable:false, Sortable:false, Visible:false
+MarketingAgency, Filterable:false, Sortable:false, Visible:false
+NoAnswerCount, Filterable:true, Sortable:true, Visible:false
+NoAnswerDistinctCount, Filterable:true, Sortable:true, Visible:false
+PendingAlreadyExistView, Filterable:false, Sortable:false, Visible:false
+PropertyType, Filterable:false, Sortable:true, Visible:true
+QualifiedCount, Filterable:true, Sortable:true, Visible:false
+QualifiedDistinctCount, Filterable:true, Sortable:true, Visible:false
+ReassignCount, Filterable:true, Sortable:true, Visible:false
+ReassignedNewOnce, Filterable:true, Sortable:true, Visible:false
+ReassignedOnce, Filterable:false, Sortable:false, Visible:false
+SalesType, Filterable:false, Sortable:true, Visible:true
+Service, Filterable:false, Sortable:true, Visible:true
+SettingInProgressCount, Filterable:true, Sortable:true, Visible:false
+TopMostManagerName, Filterable:false, Sortable:false, Visible:false
+Usage, Filterable:false, Sortable:true, Visible:true
+ViewedByCurAgent, Filterable:false, Sortable:false, Visible:false

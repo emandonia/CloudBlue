@@ -1,0 +1,186 @@
+@page "/edit-developers-project"
+
+<PageTitle>Edit DevelopersProject</PageTitle>
+<RadzenRow>
+    <RadzenColumn SizeMD="9">
+    <RadzenLabel style="font-weight: bold" Text="Item no longer available." Visible="@(!canEdit)" />
+    </RadzenColumn>
+    <RadzenColumn SizeMD="3">
+    <RadzenButton ButtonStyle="ButtonStyle.Secondary" style="margin-bottom: 20px" Text="Close" Visible="@(!canEdit)" Click="@CancelButtonClick" />
+    </RadzenColumn>
+</RadzenRow>
+<RadzenRow>
+    <RadzenColumn SizeMD="9">
+    <RadzenLabel style="font-weight: bold" Text="Another user has made conflicting changes to one or more of the fields you have modified. Please reload." Visible="@hasChanges" />
+    </RadzenColumn>
+    <RadzenColumn SizeMD="3">
+    <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="autorenew" style="margin-bottom: 20px" Text="Reload" Visible="@hasChanges" Click="@ReloadButtonClick" />
+    </RadzenColumn>
+</RadzenRow>
+
+    <RadzenColumn SizeMD=12>
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save DevelopersProject</RadzenAlert>
+        <RadzenTemplateForm TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" Data="@developersProject" Visible="@(developersProject != null && canEdit)" Submit="@FormSubmit">
+          <RadzenStack>
+            <RadzenFormField Text="Project Name" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@developersProject.ProjectName" Name="ProjectName" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="ProjectName" Text="ProjectName is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Revenue" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@developersProject.Revenue" Name="Revenue" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="Revenue" Text="Revenue is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Agent Commission" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@developersProject.AgentCommission" Name="AgentCommission" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="AgentCommission" Text="AgentCommission is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Team Leader Commission" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@developersProject.TeamLeaderCommission" Name="TeamLeaderCommission" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="TeamLeaderCommission" Text="TeamLeaderCommission is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Sales Manager Commission" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@developersProject.SalesManagerCommission" Name="SalesManagerCommission" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="SalesManagerCommission" Text="SalesManagerCommission is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Developer Fk" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@developersProject.DeveloperFk" Name="DeveloperFk" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="DeveloperFk" Text="DeveloperFk is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenFormField Text="Project Id" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@developersProject.ProjectId" Name="ProjectId" />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenFormField Text="Developer Project Pk" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@developersProject.DeveloperProjectPk" Name="DeveloperProjectPk" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="DeveloperProjectPk" Text="DeveloperProjectPk is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Revenue Per Sale Volume" Component="RevenuePerSaleVolume" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@developersProject.RevenuePerSaleVolume" Name="RevenuePerSaleVolume" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Sales Manager Commission Per Sale Volume" Component="SalesManagerCommissionPerSaleVolume" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@developersProject.SalesManagerCommissionPerSaleVolume" Name="SalesManagerCommissionPerSaleVolume" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Team Leader Commission Per Sale Volume" Component="TeamLeaderCommissionPerSaleVolume" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@developersProject.TeamLeaderCommissionPerSaleVolume" Name="TeamLeaderCommissionPerSaleVolume" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Agent Commission Per Sale Volume" Component="AgentCommissionPerSaleVolume" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@developersProject.AgentCommissionPerSaleVolume" Name="AgentCommissionPerSaleVolume" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenFormField Text="Project Referral Name" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@developersProject.ProjectReferralName" Name="ProjectReferralName" />
+              </ChildContent>
+            </RadzenFormField>
+            <RadzenFormField Text="Project Referral Commission" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@developersProject.ProjectReferralCommission" Name="ProjectReferralCommission" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="ProjectReferralCommission" Text="ProjectReferralCommission is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Is Regular" Component="IsRegular" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@developersProject.IsRegular" Name="IsRegular" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Force Half Deal" Component="ForceHalfDeal" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@developersProject.ForceHalfDeal" Name="ForceHalfDeal" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenFormField Text="Force Achievement Percentage" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@developersProject.ForceAchievementPercentage" Name="ForceAchievementPercentage" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="ForceAchievementPercentage" Text="ForceAchievementPercentage is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Force Flat Rate Commission" Component="ForceFlatRateCommission" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@developersProject.ForceFlatRateCommission" Name="ForceFlatRateCommission" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenFormField Text="Force Commission Percentage" Variant="Variant.Outlined">
+                  <ChildContent>
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@developersProject.ForceCommissionPercentage" Name="ForceCommissionPercentage" />
+                  </ChildContent>    
+                  <Helper>
+                    <RadzenRequiredValidator Component="ForceCommissionPercentage" Text="ForceCommissionPercentage is required" />
+                  </Helper>
+            </RadzenFormField>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Selection" Component="Selection" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenCheckBox @bind-Value="@developersProject.Selection" Name="Selection" />
+                </RadzenColumn>
+            </RadzenRow>
+          </RadzenStack>
+          <RadzenStack style="margin-top:1rem;" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick"  />
+          </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+

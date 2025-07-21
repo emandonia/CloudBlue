@@ -1,0 +1,139 @@
+﻿@using CloudBlue.Domain.DomainModels
+@inject DialogService DialogService
+
+<style>
+    .rz-alert-md {
+        --rz-alert-gap: 0.2rem !important;
+        --rz-alert-margin: 0.2rem  !important;
+        --rz-alert-padding: 0.2rem !important;
+        --rz-alert-message-margin: 0.2rem !important;
+        --rz-alert-icon-margin: 0.2rem !important;
+    }
+
+    .rz-row {
+        margin-bottom: 0px !important;
+        margin-top: 0px !important;
+    }
+</style>
+<RadzenStack Gap="0.25rem">
+    <Spinners></Spinners>
+
+    <RadzenRow JustifyContent="JustifyContent.Center" lignItems="AlignItems.Center">
+        <RadzenAlert Visible="@_showQuestion" AllowClose="false" AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter">
+            Are you sure you want to apply this action?
+        </RadzenAlert>
+        <RadzenAlert Visible="@(!_showQuestion)" AlertStyle="AlertStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter">
+            Click "Apply" to redirect to the next step"
+        </RadzenAlert>
+    </RadzenRow>
+
+    <RadzenTemplateForm TItem="LeadTicketActionModel" Data="@_model" Submit="@ApplyActionAsync">
+
+
+        <RadzenFieldset AllowCollapse="false">
+
+            <ChildContent>
+
+
+                <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+
+                    <RadzenColumn Size="12" SizeMD="8">
+
+
+                        <RadzenDataGrid Style="height: 110px" GridLines="DataGridGridLines.Both" Data="@_results" @ref="_grid"
+                                        Count="@_results.Count" TItem="EntityActionResult">
+
+                            <Columns>
+                                <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="20%" Filterable="false" Sortable="true" TItem="EntityActionResult" Property="@nameof(EntityActionResult.ItemId)" Title="Id">
+
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn TextAlign="TextAlign.Center" TItem="EntityActionResult" Filterable="false" Visible="@_isResponse" Property="@nameof(EntityActionResult.ActionResult)" Sortable="true" Title="Applicable" Width="20%">
+                                    <Template Context="bulkActionResult">
+                                        @{
+                                            var path = $"/images/{bulkActionResult.ActionResult}.png";
+                                        }
+
+                                        <RadzenImage Style="height: 20px; width: 20px;" Path="@path"></RadzenImage>
+
+
+                                    </template>
+                                </RadzenDataGridColumn>
+
+                                <RadzenDataGridColumn TextAlign="TextAlign.Center" Width="60%" TItem="EntityActionResult" Filterable="false" Property="@nameof(EntityActionResult.Message)" Sortable="true" Title="Notes">
+                                    <Template Context="bulkActionResult">
+                                        @{
+                                            var badgeStyle = _isResponse ? bulkActionResult.ActionResult ? BadgeStyle.Success : BadgeStyle.Danger : bulkActionResult.ActionResult ? BadgeStyle.Info : BadgeStyle.Warning;
+                                        }
+
+                                        <RadzenBadge Shade="Shade.Dark" BadgeStyle="@badgeStyle" Variant="Variant.Outlined" Text="@bulkActionResult.Message"/>
+
+
+                                    </Template>
+                                </RadzenDataGridColumn>
+
+
+                            </Columns>
+
+
+                        </RadzenDataGrid>
+                    </RadzenColumn>
+
+
+                </RadzenRow>
+
+
+            </ChildContent>
+        </RadzenFieldset>
+
+
+        <RadzenFieldset AllowCollapse="false">
+
+            <HeaderTemplate>
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+
+                    <b>
+                        <span class="titleSpan">@SubTitle</span>
+                    </b>
+                </RadzenStack>
+            </HeaderTemplate>
+
+            <ChildContent>
+
+
+                <RadzenRow Visible="@_showReason" JustifyContent="JustifyContent.Center" lignItems="AlignItems.Center">
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenFormField Text="" Variant="Variant.Outlined" Style="width: 100%;">
+
+                            <RadzenDropDown AllowClear="true" Name="ReasonId" @bind-Value="@_model.ReasonId" Data="@ReasonItems" TextProperty="ItemName" ValueProperty="ItemId" Placeholder="Select One" Style="width: 100%;"/>
+                            <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="ReasonId" ComponentProperty="Value"/>
+
+                        </RadzenFormField>
+
+
+                    </RadzenColumn>
+
+
+                </RadzenRow>
+                <RadzenRow JustifyContent="JustifyContent.Center" Visible="@_showComment" lignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="12">
+                        <RadzenFormField Text="Notes" Variant="Variant.Outlined" Style="width: 100%;">
+                            <RadzenTextArea Name="Notes" @bind-Value="@_model.Comment" Style="width: 100%;" Multiline="true" Rows="3"/>
+                            <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="Notes" ComponentProperty="Value"/>
+                        </RadzenFormField>
+
+                    </RadzenColumn>
+                </RadzenRow>
+            </ChildContent>
+        </RadzenFieldset>
+
+
+        <RadzenRow JustifyContent="JustifyContent.Center" lignItems="AlignItems.Center" Style="margin-top: 20px !important">
+            <RadzenButton ButtonType="ButtonType.Submit" Disabled="@_isResponse" Text="Apply" Style="width: 80px;"/>
+            <RadzenButton Text="Close" Click="@Close" ButtonStyle="ButtonStyle.Light"/>
+        </RadzenRow>
+
+
+    </RadzenTemplateForm>
+</RadzenStack>

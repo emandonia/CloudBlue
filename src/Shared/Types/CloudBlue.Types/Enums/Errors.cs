@@ -1,0 +1,37 @@
+﻿namespace CloudBlue.Domain.Enums;
+
+public enum Errors
+{
+    EmailAlreadyExists = 1,
+    ErrorCreatingAccount = 2,
+    ErrorCreatingUser = 3,
+    ErrorCreatingClient = 4,
+    ErrorCreatingCall = 5,
+    EmailDoesNotExist = 6,
+    InvalidStatus = 7,
+    ItemIsNotBlocked = 8,
+    UserAccountIsNotActive = 9,
+    UserDoesNotExist = 10,
+    AccountIsNotActiveContactAdmin = 11,
+    InvalidCredentials = 12,
+    InvalidEndDate = 13,
+    InvalidPasswordResetToken = 14,
+    ErrorOccurredContactAdmin = 15,
+    ExpiredPasswordResetToken = 16,
+    InvalidOldPassword = 17,
+    ItemDoesNotExistOrYouDoNotHavePrivilegeToAccess = 18,
+    YouCannotDeleteItemAsThereIsOneOrMoreSubordinatingItem = 19,
+    ItemAlreadyDeleted = 20,
+    ExistingItemNotFound = 21,
+    ErrorCreatingLeadTicket = 22,
+    YouDoNotHavePrivilegeToDoThisAction = 23,
+    ItemNotFound = 24,
+    UserNameAlreadyExists = 25,
+    MobileAlreadyExists = 26,
+    ProjectDoesNotExists = 27,
+    UnitNumberAlreadyExist = 28,
+    AgentDoesNotExist = 29,
+    APrimeTcrIsAssociatedWithThisLeadTicketId = 30,
+    ItemAlreadyExist = 31,
+    RequiredDataAreMissing
+}

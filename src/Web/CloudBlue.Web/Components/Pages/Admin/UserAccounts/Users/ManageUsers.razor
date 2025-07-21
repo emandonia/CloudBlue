@@ -1,0 +1,277 @@
+@page "/users/manage"
+@using CloudBlue.Domain.DomainModels.Filtration.Interfaces
+@using CloudBlue.Domain.DomainModels.Users.UsersManagement
+
+<style>
+    .rz-grid-table {
+        width: 1095px !important;
+    }
+
+        .rz-grid-table td .rz-cell-data {
+            overflow-wrap: break-word;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+</style>
+<PageTitle>Manage Users</PageTitle>
+
+
+<RadzenColumn SizeMD="12">
+
+<RadzenStack>
+
+
+<RadzenTemplateForm TItem="UsersFiltersModel" Data="@_filters">
+
+
+    <RadzenPanel AllowCollapse="true" class="rz-my-10 rz-mx-auto">
+        <HeaderTemplate>
+            <RadzenText TextStyle="TextStyle.H6" class="rz-display-flex rz-align-items-center rz-m-0">
+                <RadzenIcon Icon="filter_alt" class="rz-me-1"/><b>Filters</b>
+            </RadzenText>
+        </HeaderTemplate>
+
+        <ChildContent>
+            <RadzenFieldset AllowCollapse="true">
+                <ChildContent>
+                    <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+                        <RadzenColumn Size="12" SizeMD="3">
+                            <RadzenFormField Text="Id" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                <RadzenNumeric style="display: block; width: 100%" @bind-Value="@_filters.Id" Name="UserId"/>
+
+                            </RadzenFormField>
+
+
+                        </RadzenColumn>
+
+                        <RadzenColumn Size="12" SizeMD="3">
+                            <RadzenFormField Text="Full Name" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                <RadzenTextBox style="display: block; width: 100%" @bind-Value="@_filters.Fullname" Name="Fullname"/>
+
+                            </RadzenFormField>
+
+
+                        </RadzenColumn>
+
+                        <RadzenColumn Size="12" SizeMD="3">
+                            <RadzenFormField Text="Username" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                <RadzenTextBox style="display: block; width: 100%" @bind-Value="@_filters.Username" Name="Username"/>
+
+                            </RadzenFormField>
+
+
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="3">
+                            <RadzenFormField Text="Email" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                <RadzenTextBox style="display: block; width: 100%" @bind-Value="@_filters.Email" Name="Email"/>
+
+
+                            </RadzenFormField>
+
+
+                        </RadzenColumn>
+
+                    </RadzenRow>
+
+                    <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+                        <RadzenColumn Size="12" SizeMD="3">
+                            <RadzenFormField Text="Company" Variant="Variant.Outlined" Style="width: 100%;">
+                                <RadzenDropDown AllowClear="true" Change="CompanyChanged"
+                                                Name="CompanyId" @bind-Value="@_filters.CompanyId" Data="@_companies" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Company" Style="width: 100%;"/>
+                            </RadzenFormField>
+                        </RadzenColumn>
+
+                        <RadzenColumn Size="12" SizeMD="3">
+                            <RadzenFormField Text="Branch" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                <RadzenDropDown AllowClear="true" Change="PopulateTopManagers" Name="BranchId" @bind-Value="@_filters.BranchId" Data="@_branches" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Branch" Style="width: 100%;"/>
+
+
+                            </RadzenFormField>
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="3">
+                            <RadzenFormField Text="Department" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                <RadzenDropDown AllowClear="true" Name="DepartmentId" @bind-Value="@_filters.DepartmentId" Data="@_departments" Change="DepartmentChanged" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Department" Style="width: 100%;"/>
+
+
+                            </RadzenFormField>
+
+
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="3">
+                            <RadzenFormField Text="Position" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                <RadzenDropDown AllowClear="true" Name="PositionId" @bind-Value="@_filters.PositionId" Data="@_userPositions" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Position" Style="width: 100%;"/>
+
+
+                            </RadzenFormField>
+
+
+                        </RadzenColumn>
+
+                    </RadzenRow>
+
+                    <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+                        <RadzenColumn Size="12" SizeMD="6">
+                            <RadzenFormField Text="Top Manager" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                <RadzenDropDown Disabled="_topManagersDisabled" AllowClear="true" Name="TopManagerId" @bind-Value="@_filters.TopManagerId" Data="@_topManagers" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Client Category" Style="width: 100%;"/>
+
+
+                            </RadzenFormField>
+
+
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="3">
+                            <RadzenFormField Text="Is Active" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                <RadzenDropDown AllowClear="true" Name="Isactive" @bind-Value="@_filters.ApprovedStatus" Data="@_yesNoList" TextProperty="ItemName" ValueProperty="ItemId" Style="width: 100%;"/>
+
+
+                            </RadzenFormField>
+
+
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="3">
+                            <RadzenFormField Text="Is Lockedout" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                <RadzenDropDown AllowClear="true" Name="Lockedout" @bind-Value="@_filters.LockedStatus" Data="@_yesNoList" TextProperty="ItemName" ValueProperty="ItemId" Style="width: 100%;"/>
+
+
+                            </RadzenFormField>
+
+
+                        </RadzenColumn>
+
+
+                    </RadzenRow>
+
+
+                </ChildContent>
+            </RadzenFieldset>
+
+
+            <RadzenButton ButtonType="ButtonType.Submit" Shade="Shade.Lighter" Click="@Search" Text="Search" ButtonStyle="ButtonStyle.Secondary"/>
+            @* 
+<RadzenButton ButtonType="ButtonType.Submit" class="floating-button" Shade="Shade.Lighter" Click="@Search" Text="Search" ButtonStyle="ButtonStyle.Primary"/> *@
+            <RadzenButton Shade="Shade.Lighter" Click="@ResetFilters" Text="Reset Filters" ButtonStyle="ButtonStyle.Primary"/>
+
+
+        </ChildContent>
+    </RadzenPanel>
+</RadzenTemplateForm>
+
+
+<RadzenRow>
+
+    <RadzenButton Icon="add_circle_outline" Text="Add" Click="@AddButtonClick" Variant="Variant.Flat"/>
+
+    <RadzenDataGrid @ref="_grid0" ColumnWidth="200px" AllowColumnPicking="true" AllowPickAllColumns="true" Count="_totalNumber" FilterMode="FilterMode.Advanced" ShowPagingSummary="true" PageSizeOptions="@(new[] { 5, 10, 20, 30 })" AllowColumnReorder="true" AllowColumnResize="true" AllowSorting="true"
+                    AllowPaging="true" LoadData="LoadData" Data="@_users" TItem="UserItemForList">
+        <Columns>
+            <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Property="@nameof(UserItemForList.Id)" Title="User Id" Pickable="false" Sortable="true">
+            </RadzenDataGridColumn>
+
+
+            <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Property="@nameof(UserItemForList.CompanyName)" Title="Company" Sortable="true">
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Sortable="false" Property="@nameof(UserItemForList.TopMostManagerName)" Visible="false" Title="Top Manager">
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Sortable="false" Property="@nameof(UserItemForList.FullName)" Title="Full Name">
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Sortable="false" Property="@nameof(UserItemForList.UserPositionName)" Title="Position">
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Visible="false" Sortable="false" Property="@nameof(UserItemForList.DirectManagerName)" Title="Direct Manager">
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Visible="false" Sortable="false" Property="@nameof(UserItemForList.IsVirtual)" Title="Is Virtual">
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Sortable="false" Property="@nameof(UserItemForList.IsApproved)" Title="Is Active">
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Visible="false" Sortable="false" Property="@nameof(UserItemForList.HireDate)" Title="Hire Date">
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Visible="false" Sortable="false" Property="@nameof(UserItemForList.InResaleTeam)" Title="In Resale Team">
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Visible="false" Sortable="false" Property="@nameof(UserItemForList.ResignDate)" Title="Resign Date">
+            </RadzenDataGridColumn>
+ <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Visible="false" Sortable="false" Property="@nameof(UserItemForList.DeviceInfo)" Title="Mobile">
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Visible="false" Property="@nameof(UserItemForList.UserName)" Title="User Name">
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Visible="false" Property="@nameof(UserItemForList.Email)" Title="Email">
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Sortable="false" Visible="false" Property="@nameof(UserItemForList.IsLockedOut)" Title="Is Locked Out">
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Sortable="false" Visible="false" Property="@nameof(UserItemForList.CreateDate)" Title="Create Date">
+            </RadzenDataGridColumn>
+
+            <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Property="@nameof(UserItemForList.LastLoginDate)" Visible="false" Sortable="false" Title="Last Login Date">
+            </RadzenDataGridColumn>
+                    <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Property="@nameof(UserItemForList.CanAccessCommissionSystem)" Visible="false" Sortable="true" Filterable="true" Title="Access Commission System">
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Property="@nameof(UserItemForList.CanUserAccessPortal)" Visible="false" Sortable="true" Filterable="true" Title="Access CloudBlue Portal">
+                    </RadzenDataGridColumn>
+
+                    <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Property="@nameof(UserItemForList.DepartmentName)" Title="Department">
+                         
+            </RadzenDataGridColumn>
+
+                    <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Property="@nameof(UserItemForList.BranchName)" Visible="false" Sortable="false" Filterable="false" Pickable="true" Title="Branch" />
+                    
+                    <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Property="@nameof(UserItemForList.CanUserAccessPortal)" Visible="false" Sortable="false" Filterable="false" Pickable="true" Title="Access CloudBlue Portal" />
+
+
+
+
+
+            <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="UserItemForList" Sortable="false" Pickable="false" Title="Actions">
+                <Template Context="data">
+                    <RadzenStack Orientation="Orientation.Vertical">
+                        <RadzenSplitButton Variant="Variant.Flat" Click="@(args => ApplySingleAction(args))" Text="Actions" ButtonStyle="ButtonStyle.Secondary">
+                            <ChildContent>
+                                <RadzenSplitButtonItem Style="cursor: pointer" Visible="@data.IsApproved" Icon="calendar_today" Text="Deactivate Account" Value="@($"{data.Id}_1")"/>
+
+                                <RadzenSplitButtonItem Style="cursor: pointer" Visible="@(!data.IsApproved)" Icon="calendar_today" Text="Activate Account" Value="@($"{data.Id}_2")"/>
+                             
+                                <RadzenSplitButtonItem Style="cursor: pointer" Visible="@(data.IsApproved && data.IsLockedOut)" Icon="calendar_today" Text="Unblock Account" Value="@($"{data.Id}_3")"/>
+
+                                <RadzenSplitButtonItem Style="cursor: pointer" Icon="calendar_today" Text="Update Position" Value="@($"{data.Id}_4")"/>
+
+                                <RadzenSplitButtonItem Style="cursor: pointer" Visible="@(data.IsApproved && data.DepartmentId == SalesDeptId)" Icon="calendar_today" Text="Update Direct Manager" Value="@($"{data.Id}_5")"/>
+
+                                <RadzenSplitButtonItem Style="cursor: pointer" Icon="calendar_today" Text="Set Resigned" Value="@($"{data.Id}_7")"/>
+
+                                <RadzenSplitButtonItem Style="cursor: pointer" Icon="calendar_today" Visible="@data.IsApproved" Text="Change Password" Value="@($"{data.Id}_6")"/>
+
+                                        <RadzenSplitButtonItem Style="cursor: pointer" Icon="calendar_today" Visible="@data.IsApproved" Text="Reset Password" Value="@($"{data.Id}_12")" />
+
+
+
+
+                                        <RadzenSplitButtonItem Style="cursor: pointer" Icon="calendar_today" Visible="@data.IsApproved" Text="Edit Full name" Value="@($"{data.Id}_8")"/>
+
+                                <RadzenSplitButtonItem Style="cursor: pointer" Icon="calendar_today" Visible="@data.IsApproved" Text="Edit Email" Value="@($"{data.Id}_9")"/>
+
+                                <RadzenSplitButtonItem Style="cursor: pointer" Icon="calendar_today" Visible="@data.IsApproved" Text="Edit Username" Value="@($"{data.Id}_11")"/>
+                                <RadzenSplitButtonItem Style="cursor: pointer" Icon="calendar_today" Visible="@data.IsApproved" Text="Edit Mobile" Value="@($"{data.Id}_10")"/>
+
+
+                            </ChildContent>
+                        </RadzenSplitButton>
+                    </RadzenStack>
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+
+    </RadzenDataGrid>
+</RadzenRow>
+</RadzenStack>
+</RadzenColumn>

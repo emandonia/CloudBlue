@@ -1,0 +1,279 @@
+﻿@using CloudBlue.Domain.DomainModels
+@using CloudBlue.Domain.DomainModels.CallLeads
+@inject DialogService DialogService
+
+<style>
+
+    .rz-g > div, .rz-datalist-data > li {
+        background-color: var(--rz-datalist-item-background-color);
+        border: var(--rz-datalist-item-border);
+        border-radius: var(--rz-datalist-border-radius);
+        box-shadow: var(--rz-datalist-item-shadow);
+        padding: 0.5rem;
+    }
+
+    .rz-text-subtitle2 {
+        color: #1b1d20 !important;
+        font-family: Roboto, sans-serif !important;
+        font-size: 0.7rem !important;
+        font-weight: 500 !important;
+        letter-spacing: 0.1px !important;
+        line-height: 1.5 !important;
+        margin-block-end: 0.5rem !important;
+        margin-block-start: 0 !important;
+        padding-left: 20px;
+        padding-top: 15px;
+    }
+
+</style>
+
+<RadzenTabs TabPosition="TabPosition.Top" RenderMode="TabRenderMode.Server">
+<Tabs>
+<RadzenTabsItem Text="Client Info">
+    <RadzenTemplateForm Data="@CallItem" TItem="CallItemForList">
+
+        @* Client Info *@
+        <RadzenFieldset>
+
+            <ChildContent>
+                <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+
+
+
+                    @* Name *@
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenFormField Text="Client Name" Variant="Variant.Outlined" Style="width: 100%;">
+                            <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                <b>@($"{CallItem.ClientTitle} {CallItem.ClientName}")"</b>
+                            </RadzenText>
+
+                        </RadzenFormField>
+
+
+                    </RadzenColumn>
+                    @* Date of Birth *@
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenFormField Text="Date of Birth" Variant="Variant.Outlined" Style="width: 100%;">
+
+                            <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                <b>@(CallItem.ClientBirthDate.HasValue ? CallItem.ClientBirthDate.Value.ToString("dd MMM, yyyy") : "N/A")</b>
+                            </RadzenText>
+
+                        </RadzenFormField>
+
+                    </RadzenColumn>
+
+                    @*  Gender *@
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenFormField Text="Gender" Variant="Variant.Outlined" Style="width: 100%;">
+
+                            <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                <b>@CallItem.Gender</b>
+                            </RadzenText>
+
+
+                        </RadzenFormField>
+
+
+                    </RadzenColumn>
+
+
+                </RadzenRow>
+
+
+                <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+
+
+                    @* Client Devices *@
+
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenFormField Text="Client Devices" Variant="Variant.Outlined" Style="width: 100%;">
+                            <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                <b>@CallItem.ClientPhone</b>
+                            </RadzenText>
+
+                        </RadzenFormField>
+
+
+                    </RadzenColumn>
+
+                    @* ClientType *@
+
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenFormField Text="Client Type" Variant="Variant.Outlined" Style="width: 100%;">
+                            <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                <b>@CallItem.ClientType</b>
+                            </RadzenText>
+
+                        </RadzenFormField>
+
+
+                    </RadzenColumn>
+                    @* ClientCategory *@
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenFormField Text="Client Category" Variant="Variant.Outlined" Style="width: 100%;">
+
+
+                            <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                <b>@CallItem.ClientCategory</b>
+                            </RadzenText>
+
+                        </RadzenFormField>
+
+
+                    </RadzenColumn>
+
+
+                </RadzenRow>
+
+
+                <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+                    @* WorkField *@
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenFormField Text="Work Field" Variant="Variant.Outlined" Style="width: 100%;">
+
+                            <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                <b>@CallItem.WorkField</b>
+                            </RadzenText>
+
+                        </RadzenFormField>
+
+
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenFormField Text="Occupation" Variant="Variant.Outlined" Style="width: 100%;">
+
+                            <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                <b>@CallItem.ClientOccupation</b>
+                            </RadzenText>
+                        </RadzenFormField>
+
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenFormField Text="Company" Variant="Variant.Outlined" Style="width: 100%;">
+
+
+                            <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                <b>@CallItem.ClientCompanyName</b>
+                            </RadzenText>
+
+                        </RadzenFormField>
+
+
+                    </RadzenColumn>
+                </RadzenRow>
+
+
+                <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+                    @* source *@
+
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenFormField Text="Lead Source" Variant="Variant.Outlined" Style="width: 100%;">
+
+                            <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                <b>@CallItem.LeadSource</b>
+                            </RadzenText>
+                        </RadzenFormField>
+
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenFormField Text="How did you know us" Variant="Variant.Outlined" Style="width: 100%;">
+
+
+                            <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                                <b>@($"{CallItem.KnowSource} - {CallItem.KnowSubSource}")</b>
+                            </RadzenText>
+
+                        </RadzenFormField>
+
+
+                    </RadzenColumn>
+
+
+                </RadzenRow>
+
+
+            </ChildContent>
+        </RadzenFieldset>
+
+
+    </RadzenTemplateForm>
+
+
+</RadzenTabsItem>
+
+
+<RadzenTabsItem Text="Activities">
+
+
+    <div style="height: 200px; max-height: 300px; overflow-y: scroll;">
+        <RadzenDataList WrapItems="false" Style="width: 98%" AllowPaging="false" Data="@_systemEventItems" TItem="SystemEventItem">
+            <Template Context="eventItem">
+
+
+                <RadzenCard class="rz-my-12 rz-mx-auto" Style="width: 97%">
+                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" class="rz-p-4">
+
+
+                        <RadzenImage Path="@eventItem.UserImagePath" Style="border-radius: 50%; height: 100px; width: 100px;" AlternateText="@(eventItem.FullName)" Attributes="@(_onImageError)"/>
+
+
+                        <RadzenStack Gap="0">
+                            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0">Created By</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Subtitle2">
+                                <b>@($"{eventItem.FullName} - {eventItem.UserPositionName}")</b>
+                            </RadzenText>
+                            <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0">Comment</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Subtitle2">
+                                <b>@eventItem.EventComment</b>
+                            </RadzenText>
+                        </RadzenStack>
+                    </RadzenStack>
+                    <RadzenCard class="rz-background-color-primary-light rz-shadow-0 rz-border-radius-0 rz-p-8" style="width: 99%;">
+                        <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-light">
+                            <strong>Event Info</strong>
+                        </RadzenText>
+                        <RadzenRow RowGap="0">
+                            <RadzenColumn SizeSM="3">
+                                <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Creation Date</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light">
+                                    <b>@(eventItem.EventCreationDateTime.HasValue ? eventItem.EventCreationDateTime.Value.ToString("dd MMM, yyyy hh:mm tt") : "N/A")</b>
+                                </RadzenText>
+                            </RadzenColumn>
+                            <RadzenColumn SizeSM="3">
+                                <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Event Date</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light">
+                                    <b>@(eventItem.EventDateTime.HasValue ? eventItem.EventDateTime.Value.ToString("dd MMM, yyyy hh:mm tt") : "N/A")</b>
+                                </RadzenText>
+                            </RadzenColumn>
+                            <RadzenColumn SizeSM="3">
+                                <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Event Type</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light">
+                                    <b>@($"{eventItem.ContactingType} - {eventItem.EventType}")</b>
+                                </RadzenText>
+                            </RadzenColumn>
+                            <RadzenColumn SizeSM="3">
+                                <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Event Process</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-color-on-primary-light">
+                                    <b>@eventItem.EventProcess</b>
+                                </RadzenText>
+                            </RadzenColumn>
+                        </RadzenRow>
+                    </RadzenCard>
+
+                </RadzenCard>
+
+
+            </Template>
+        </RadzenDataList>
+
+
+    </div>
+</RadzenTabsItem>
+</Tabs>
+</RadzenTabs>

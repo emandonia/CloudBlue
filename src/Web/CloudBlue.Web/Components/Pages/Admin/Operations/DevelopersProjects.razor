@@ -1,0 +1,79 @@
+@page "/developers-projects"
+
+<PageTitle>DevelopersProjects</PageTitle>
+<RadzenStack>
+    <RadzenRow AlignItems="AlignItems.Center">
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenText Text="DevelopersProjects" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                <RadzenSplitButton Icon="get_app" Text="Export" Click="@ExportClick" Variant="Variant.Flat" Shade="Shade.Lighter">
+                    <RadzenSplitButtonItem Text="Excel" Value="xlsx" />
+                    <RadzenSplitButtonItem Text="CSV" Value="csv" />
+                </RadzenSplitButton>
+                <RadzenButton Icon="add_circle_outline" Text="Add" Click="@AddButtonClick" Variant="Variant.Flat" />
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenTextBox Placeholder="Search ..." style="display: block; width: 100%" @oninput="@Search" aria-label="Search by all string columns" />
+    <RadzenRow>
+      <RadzenColumn SizeMD=12>
+        <RadzenDataGrid @ref="grid0" ColumnWidth="200px"   AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
+            Data="@developersProjects" TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" RowDoubleClick="@EditRow">
+            <Columns>
+                <RadzenDataGridColumn TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" Property="ProjectName" Title="Project Name">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" Property="Revenue" Title="Revenue">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" Property="AgentCommission" Title="Agent Commission">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" Property="TeamLeaderCommission" Title="Team Leader Commission">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" Property="SalesManagerCommission" Title="Sales Manager Commission">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" Property="DeveloperFk" Title="Developer Fk">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" Property="ProjectId" Title="Project Id">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" Property="DeveloperProjectPk" Title="Developer Project Pk">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" Property="RevenuePerSaleVolume" Title="Revenue Per Sale Volume">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" Property="SalesManagerCommissionPerSaleVolume" Title="Sales Manager Commission Per Sale Volume">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" Property="TeamLeaderCommissionPerSaleVolume" Title="Team Leader Commission Per Sale Volume">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" Property="AgentCommissionPerSaleVolume" Title="Agent Commission Per Sale Volume">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" Property="ProjectReferralName" Title="Project Referral Name">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" Property="ProjectReferralCommission" Title="Project Referral Commission">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" Property="IsRegular" Title="Is Regular">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" Property="ForceHalfDeal" Title="Force Half Deal">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" Property="ForceAchievementPercentage" Title="Force Achievement Percentage">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" Property="ForceFlatRateCommission" Title="Force Flat Rate Commission">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" Property="ForceCommissionPercentage" Title="Force Commission Percentage">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" Property="Selection" Title="Selection">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="NewCloudBlueMirror.Models.CloudBlue.DevelopersProject" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
+                    <Template Context="developersProject">
+
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium"
+                            Shade="Shade.Lighter" Variant="Variant.Flat"
+                            Click=@(args => GridDeleteButtonClick(args, developersProject)) @onclick:stopPropagation="true" />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+
+        </RadzenDataGrid>
+
+    </RadzenColumn>
+  </RadzenRow>
+</RadzenStack>

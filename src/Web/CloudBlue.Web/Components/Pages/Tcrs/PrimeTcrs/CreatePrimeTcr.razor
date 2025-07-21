@@ -1,0 +1,538 @@
+﻿@page "/prime-tcrs/create/{id:long}"
+@using CloudBlue.Domain.DomainModels.PrimeTcrs
+<h3>Create Prime Tcr</h3>
+
+<style>
+    .rz-grid-table {
+        width: auto !important;
+    }
+
+</style>
+
+
+<RadzenTemplateForm Data="@_model" TItem="CreatePrimeTcrModel" Submit="@SearchLeadTicket">
+    <RadzenFieldset AllowCollapse="true">
+        <HeaderTemplate>
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+                <RadzenIcon Icon="search" class="titleSpan"/>
+                <b>
+                    <span class="titleSpan">Find Lead Ticket</span>
+                </b>
+            </RadzenStack>
+        </HeaderTemplate>
+        <ChildContent>
+
+
+            <RadzenRow JustifyContent="JustifyContent.Center">
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenFormField Variant="Variant.Outlined" Text="Lead Ticket Id">
+                            <RadzenNumeric Name="LeadTicketId" @bind-Value="@_model.LeadTicketId"/>
+                            <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="LeadTicketId"/>
+
+
+                        </RadzenFormField>
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="2">
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="4">
+
+
+                        <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Flat" Shade="Shade.Lighter" Icon="search" Text="Search"></RadzenButton>
+
+                    </RadzenColumn>
+
+                </RadzenStack>
+
+            </RadzenRow>
+
+
+        </ChildContent>
+
+    </RadzenFieldset>
+</RadzenTemplateForm>
+
+
+<RadzenTemplateForm Data="@_model"   Visible="_showForm" TItem="CreatePrimeTcrModel" Submit="@CreatePrimeTcrAsync">
+
+@* Lead Info *@
+<RadzenFieldset AllowCollapse="true">
+    <HeaderTemplate>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+            <RadzenIcon Icon="account_box" class="titleSpan"/>
+            <b>
+                <span class="titleSpan">Lead Info</span>
+            </b>
+        </RadzenStack>
+    </HeaderTemplate>
+    <ChildContent>
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Lead Ticket Id" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@_leadItem.LeadTicketId</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Client" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@_leadItem.ClientName</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Company" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@_leadItem.CompanyName</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Branch" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@_leadItem.BranchName</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+        </RadzenRow>
+
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Usage" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@_leadItem.Usage</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Lead Source" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@_leadItem.LeadSource</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Marketing Channel" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@_leadItem.KnowSource</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="3">
+                <RadzenFormField Text="Marketing Channel Extra" Variant="Variant.Outlined" Style="width: 100%;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-text-truncate">
+                        <b>@_leadItem.KnowSubSource</b>
+                    </RadzenText>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+        </RadzenRow>
+
+
+    </ChildContent>
+</RadzenFieldset>
+
+
+<RadzenFieldset AllowCollapse="true">
+<HeaderTemplate>
+    <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+        <RadzenIcon Icon="account_box" class="titleSpan"/>
+        <b>
+            <span class="titleSpan">Unit Info</span>
+        </b>
+    </RadzenStack>
+</HeaderTemplate>
+<ChildContent>
+
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Developer" Variant="Variant.Outlined" Style="width: 100%;">
+            <Start>
+
+                <RadzenIcon class="requiredIcon"/>
+
+
+            </Start>
+            <ChildContent>
+                <RadzenDropDown AllowClear="true" Change="DeveloperChanged" Name="DeveloperId" @bind-Value="@_model.DeveloperId" Data="@_developers" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Developer" Style="width: 100%;"/>
+
+                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="DeveloperId" ComponentProperty="Value"/>
+            </ChildContent>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Project" Variant="Variant.Outlined" Style="width: 100%;">
+            <Start>
+
+                <RadzenIcon class="requiredIcon"/>
+
+
+            </Start>
+            <ChildContent>
+                <RadzenDropDown AllowClear="true" Name="ProjectId" @bind-Value="@_model.ProjectId" Data="@_projects" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Project" Style="width: 100%;"/>
+
+                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="ProjectId" ComponentProperty="Value"/>
+            </ChildContent>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Phase" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <ChildContent>
+                <RadzenTextBox style="display: block; width: 100%" @bind-Value="@_model.Phase" Name="Phase"/>
+
+
+            </ChildContent>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+
+
+</RadzenRow>
+
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Property Type" Variant="Variant.Outlined" Style="width: 100%;">
+            <Start>
+
+                <RadzenIcon class="requiredIcon"/>
+
+
+            </Start>
+            <ChildContent>
+                <RadzenDropDown AllowClear="true" Name="PropertyTypeId" @bind-Value="@_model.PropertyTypeId" Data="@_propertyTypes" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Property Type" Style="width: 100%;"/>
+
+                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="PropertyTypeId" ComponentProperty="Value"/>
+            </ChildContent>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Unit Number" Variant="Variant.Outlined" Style="width: 100%;">
+            <Start>
+
+                <RadzenIcon class="requiredIcon"/>
+
+
+            </Start>
+            <ChildContent>
+                <RadzenTextBox style="display: block; width: 100%" @bind-Value="@_model.UnitNumber" Name="UnitNumber"/>
+
+                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="UnitNumber" ComponentProperty="Value"/>
+            </ChildContent>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Sales Volume" Variant="Variant.Outlined" Style="width: 100%;">
+            <Start>
+
+                <RadzenIcon class="requiredIcon"/>
+
+
+            </Start>
+            <ChildContent>
+                <RadzenNumeric Step="1" style="display: block; width: 100%" @bind-Value="@_model.SalesVolume" Format="LE ###,###" Name="SalesVolume"/>
+
+                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="SalesVolume" ComponentProperty="Value"/>
+            </ChildContent>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+
+</RadzenRow>
+
+
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Land Area" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <ChildContent>
+                <RadzenNumeric style="display: block; width: 100%" @bind-Value="@_model.LandArea" Name="LandArea"/>
+            </ChildContent>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Build-Up Area" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <ChildContent>
+                <RadzenNumeric style="display: block; width: 100%" @bind-Value="@_model.BuildUpArea" Name="BuildUpArea"/>
+
+
+            </ChildContent>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Contract Expected Date" Variant="Variant.Outlined" Style="width: 100%;">
+            <Start>
+
+                <RadzenIcon class="requiredIcon"/>
+
+
+            </Start>
+            <ChildContent>
+                <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_model.ContractExpectedDate" Name="ContractExpectedDate"/>
+                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="ContractExpectedDate" ComponentProperty="Value"/>
+
+            </ChildContent>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+
+</RadzenRow>
+
+
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Do you Have Reservation or Contract Form" Variant="Variant.Outlined" Style="width: 100%;">
+            <Start>
+
+                <RadzenIcon class="requiredIcon"/>
+
+
+            </Start>
+            <ChildContent>
+                <RadzenDropDown AllowClear="true" Name="HasDocumentId" @bind-Value="@_model.HasDocumentId" Data="@_yesNoList" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Developer" Style="width: 100%;"/>
+
+                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="HasDocumentId" ComponentProperty="Value"/>
+            </ChildContent>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Visible="@(_model.HasDocumentId == 1)" Text="Document Type" Variant="Variant.Outlined" Style="width: 100%;">
+            <Start>
+
+                <RadzenIcon class="requiredIcon"/>
+
+
+            </Start>
+            <ChildContent>
+                <RadzenDropDown AllowClear="true" Name="DocumentTypeId" @bind-Value="@_model.DocumentTypeId" Data="@_documentTypes" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Project" Style="width: 100%;"/>
+
+                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="DocumentTypeId" ComponentProperty="Value"/>
+            </ChildContent>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+
+    <RadzenColumn Size="12" SizeMD="4">
+        <RadzenFormField Text="Document Date" Visible="@(_model.HasDocumentId == 1)" Variant="Variant.Outlined" Style="width: 100%;">
+            <Start>
+
+                <RadzenIcon class="requiredIcon"/>
+
+
+            </Start>
+            <ChildContent>
+                <RadzenDatePicker AllowClear="true" AllowInput="false" DateFormat="dd/MM/yyyy" style="display: block; width: 100%" @bind-Value="@_model.DocumentDate" Name="DocumentDate"/>
+                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="DocumentDate" ComponentProperty="Value"/>
+            </ChildContent>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+
+
+</RadzenRow>
+
+
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenFormField Text="Outside broker" Variant="Variant.Outlined" Style="width: 100%;">
+
+            <ChildContent>
+                <RadzenDropDown AllowClear="true" Name="OutsideBrokerId" @bind-Value="@_model.OutsideBrokerId" Data="@_outsideBrokers" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Outside Broker" Style="width: 100%;"/>
+
+            </ChildContent>
+        </RadzenFormField>
+
+
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenFormField Text="Remarks" Variant="Variant.Outlined" Style="width: 100%;">
+            <RadzenTextArea style="display: block; width: 100%" @bind-Value="@_model.Remarks" Name="Remarks"/>
+        </RadzenFormField>
+    </RadzenColumn>
+</RadzenRow>
+
+</ChildContent>
+</RadzenFieldset>
+
+<RadzenFieldset AllowCollapse="true">
+    <HeaderTemplate>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+            <RadzenIcon Icon="account_box" class="titleSpan"/>
+            <b>
+                <span class="titleSpan">Sales</span>
+            </b>
+        </RadzenStack>
+    </HeaderTemplate>
+    <ChildContent>
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+            @* first agent *@
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenFormField Text="First Agent" Variant="Variant.Outlined" Style="width: 100%;">
+                    <Start>
+
+                        <RadzenIcon class="requiredIcon"/>
+
+
+                    </Start>
+                    <ChildContent>
+                        <RadzenDropDown Disabled="true" Name="FirstAgentId" @bind-Value="@_model.FirstAgentId" Data="@_agents" TextProperty="ItemName" ValueProperty="ItemId" Style="width: 100%;"/>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="2">
+                <RadzenFormField Text="Percentage" Variant="Variant.Outlined" Style="width: 100%;">
+                    <Start>
+
+                        <RadzenIcon class="requiredIcon"/>
+                        &percnt;
+
+                    </Start>
+                    <ChildContent>
+                        <RadzenNumeric style="display: block; width: 100%" @bind-Value="@_model.FirstAgentSharePercentage" Name="FirstAgentSharePercentage"/>
+
+                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="FirstAgentSharePercentage" ComponentProperty="Value"/>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            @* second agent *@
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenFormField Text="Second Agent" Variant="Variant.Outlined" Style="width: 100%;">
+                    <Start>
+
+
+                    </Start>
+                    <ChildContent>
+                        <RadzenDropDown Change="AgentsChanged" AllowClear="true" Name="SecondAgentId" @bind-Value="@_model.SecondAgentId" Data="@_agents" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Agent" Style="width: 100%;"/>
+
+
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="2">
+                <RadzenFormField Text="Percentage" Variant="Variant.Outlined" Style="width: 100%;">
+                    <Start>
+
+
+                        &percnt;
+                    </Start>
+                    <ChildContent>
+                        <RadzenNumeric style="display: block; width: 100%" @bind-Value="@_model.SecondAgentSharePercentage" Name="SecondAgentSharePercentage"/>
+
+                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="SecondAgentSharePercentage" ComponentProperty="Value"/>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+        </RadzenRow>
+
+        <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+            @* first agent *@
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenFormField Text="Third Agent" Variant="Variant.Outlined" Style="width: 100%;">
+                    <Start>
+
+
+                    </Start>
+                    <ChildContent>
+                        <RadzenDropDown AllowClear="true" Change="AgentsChanged" Name="ThirdAgentId" @bind-Value="@_model.ThirdAgentId" Data="@_developers" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Agent" Style="width: 100%;"/>
+
+
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="2">
+                <RadzenFormField Text="Percentage" Variant="Variant.Outlined" Style="width: 100%;">
+                    <Start>
+
+
+                        &percnt;
+                    </Start>
+                    <ChildContent>
+                        <RadzenNumeric style="display: block; width: 100%" @bind-Value="@_model.ThirdAgentSharePercentage" Name="ThirdAgentSharePercentage"/>
+
+                        <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="ThirdAgentSharePercentage" ComponentProperty="Value"/>
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+            @* Extra manager *@
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenFormField Text="Extra Manager" Variant="Variant.Outlined" Style="width: 100%;">
+                    <Start>
+
+
+                    </Start>
+                    <ChildContent>
+                        <RadzenDropDown AllowClear="true" Disabled="true" Name="ExtraManagerId" @bind-Value="@_model.ExtraManagerId" Data="@_extraManagers" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Extra Manager" Style="width: 100%;"/>
+
+                    </ChildContent>
+                </RadzenFormField>
+
+
+            </RadzenColumn>
+
+
+        </RadzenRow>
+
+
+    </ChildContent>
+</RadzenFieldset>
+
+<RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem" class="rz-mt-8 rz-mb-4">
+    <RadzenButton ButtonType="ButtonType.Submit" Disabled="@(_isBusy)" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Primary" Icon="save" Click="() => OnButtonClick(1)" Text="Set Reserved"/>
+    <RadzenButton Click="() => OnButtonClick(2)" ButtonType="ButtonType.Submit" Disabled="@(_isBusy)" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Primary" Icon="save" Text="Set Contracted"/>
+</RadzenStack>
+</RadzenTemplateForm>

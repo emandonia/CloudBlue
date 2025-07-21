@@ -1,0 +1,272 @@
+﻿@page "/lookups/developers"
+@using CloudBlue.Domain.GenericTypes
+
+<style>
+    .rz-grid-table {
+        width: 1095px !important;
+    }
+
+        .rz-grid-table td .rz-cell-data {
+            overflow-wrap: break-word;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+</style>
+<PageTitle> Manage Developers </PageTitle>
+
+
+<RadzenColumn SizeMD="12">
+    <RadzenTemplateForm TItem="DeveloperProjectItem" Data="@_model" Submit="@FormSubmit">
+
+
+<RadzenStack>
+
+        <RadzenFieldset AllowCollapse="true">
+            <HeaderTemplate>
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.25rem">
+                    <RadzenIcon Icon="location_on" class="titleSpan" />
+
+                    <b>
+                        <span class="titleSpan">Location</span>
+                    </b>
+                </RadzenStack>
+            </HeaderTemplate>
+            <ChildContent>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenFormField Text="Country" Variant="Variant.Outlined" Style="width: 100%;">
+                            <Start>
+
+                             
+
+
+                            </Start>
+                            <ChildContent>
+                                <RadzenDropDown AllowClear="true"  Name="CountryId" Change="CountryChanged" @bind-Value="@_model.CountryId" Data="@_countries" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select Country" Style="width: 100%;" />
+                                
+                            </ChildContent>
+
+                        </RadzenFormField>
+
+
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenFormField Text="City" Variant="Variant.Outlined" Style="width: 100%;">
+                            <Start>
+
+                               
+                            </Start>
+                            <ChildContent>
+                                <RadzenDropDown AllowClear="true"   Name="CityId" @bind-Value="@_model.CityId" Data="@_cities" Change="CityChanged" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select City" Style="width: 100%;" />
+                                
+
+                            </ChildContent>
+
+                        </RadzenFormField>
+
+
+                    </RadzenColumn>
+                     
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenFormField Text="District" Variant="Variant.Outlined" Style="width: 100%;">
+                            <Start>
+
+                               
+
+                            </Start>
+                            <ChildContent>
+                                <RadzenDropDown AllowClear="true" Change="DistrictChanged"   Name="DistrictId" @bind-Value="@_model.DistrictId" Data="@_districts" TextProperty="ItemName" ValueProperty="ItemId" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Placeholder="Select District" Style="width: 100%;" />
+                                <RadzenDataAnnotationValidator Popup="true" Style="position: absolute" Component="DistrictId" ComponentProperty="Value" />
+                            </ChildContent>
+                        </RadzenFormField>
+
+
+                    </RadzenColumn>
+          
+
+                </RadzenRow>
+
+
+            </ChildContent>
+        </RadzenFieldset>
+
+          <RadzenFieldset AllowCollapse="true">
+            <HeaderTemplate>
+               
+            </HeaderTemplate>
+            <ChildContent>
+<RadzenRow>
+
+    
+    <RadzenDataGrid ColumnWidth="200px"   Count="_totalNumber" AllowSorting="true"   ShowPagingSummary="true" PageSizeOptions="@(new[] { 5, 10, 20, 30 })"   AllowPaging="true" LoadData="LoadData" Data="@_items" TItem="LocationItem">
+        <Columns>
+                                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="LocationItem" Property="Country" Title="Country" Pickable="false" Sortable="true" Filterable="false">
+            </RadzenDataGridColumn>
+
+                                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="LocationItem" Property="City" Title="City" Sortable="true" Filterable="false">
+                    </RadzenDataGridColumn>
+                                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="LocationItem" Property="District" Title="District" Sortable="true" Filterable="false">
+                                </RadzenDataGridColumn>
+
+                                <RadzenDataGridColumn HeaderCssClass="datagrid-custom-header" TItem="LocationItem" Property="Neighborhood" Title="Project" Sortable="true" Filterable="false">
+            </RadzenDataGridColumn>
+
+                  
+             
+        </Columns>
+
+    </RadzenDataGrid>
+</RadzenRow>
+      </ChildContent>
+      </RadzenFieldset>
+
+            <RadzenFieldset AllowCollapse="true">
+
+
+                <ChildContent>
+                    <RadzenRow JustifyContent="JustifyContent.Center" lignItems="AlignItems.Center">
+
+                        <RadzenColumn Size="12" SizeMD="6">
+                            <RadzenFormField Text="City" Variant="Variant.Outlined" Style="width: 100%;">
+                                <Start>
+
+                                    <RadzenIcon class="requiredIcon" />
+
+
+                                </Start>
+                                <ChildContent>
+
+                                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@_model.City" Name="City" />
+
+                                </ChildContent>
+                            </RadzenFormField>
+                        </RadzenColumn>
+
+                        <RadzenColumn Size="12" SizeMD="4">
+
+                         </RadzenColumn>
+
+
+
+                        <RadzenColumn Size="12" SizeMD="2">
+                            <RadzenFormField Text="" Variant="Variant.Outlined" Style="width: 100%;">
+                              
+                    <ChildContent>
+
+                            <RadzenButton ButtonStyle="ButtonStyle.Primary" Click="AddCity" ButtonType="ButtonType.Button" Icon="save" Text="Add City" Variant="Variant.Flat" />
+</ChildContent>
+                            </RadzenFormField>
+                        </RadzenColumn>
+
+
+                    </RadzenRow>
+                </ChildContent>
+            </RadzenFieldset>
+
+            <RadzenFieldset AllowCollapse="true">
+
+
+                <ChildContent>
+                    <RadzenRow JustifyContent="JustifyContent.Center" lignItems="AlignItems.Center">
+
+                        <RadzenColumn Size="12" SizeMD="6">
+                            <RadzenFormField Text="District" Variant="Variant.Outlined" Style="width: 100%;">
+                                <Start>
+
+                                    <RadzenIcon class="requiredIcon" />
+
+
+                                </Start>
+                                <ChildContent>
+
+                                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@_model.District" Name="District" />
+
+                                </ChildContent>
+                            </RadzenFormField>
+                        </RadzenColumn>
+
+                        <RadzenColumn Size="12" SizeMD="4">
+                           
+                        </RadzenColumn>
+
+
+
+                        <RadzenColumn Size="12" SizeMD="2">
+                            <RadzenFormField Text="" Variant="Variant.Outlined" Style="width: 100%;">
+                              
+                    <ChildContent>
+
+  <RadzenButton ButtonStyle="ButtonStyle.Primary" Click="AddDistrict" ButtonType="ButtonType.Button" Icon="save" Text="Add District" Variant="Variant.Flat" />
+                                </ChildContent>
+                            </RadzenFormField>
+
+                        </RadzenColumn>
+
+
+                    </RadzenRow>
+                </ChildContent>
+            </RadzenFieldset>
+
+
+
+
+        <RadzenFieldset AllowCollapse="true">
+
+          
+            <ChildContent>
+                <RadzenRow  JustifyContent="JustifyContent.Center" lignItems="AlignItems.Center">
+                     
+                        <RadzenColumn Size="12"  SizeMD="6">
+                            <RadzenFormField Text="Neighborhood/Project" Variant="Variant.Outlined" Style="width: 100%;">
+                                <Start>
+
+                                    <RadzenIcon class="requiredIcon" />
+
+
+                                </Start>
+                    <ChildContent>
+
+                                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@_model.Neighborhood" Name="Neighborhood" />
+                                    
+                            </ChildContent>
+                        </RadzenFormField>
+                        </RadzenColumn>
+
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenFormField Text="Type" Variant="Variant.Outlined" Style="width: 100%;">
+
+                                <ChildContent>
+
+                                    <RadzenRadioButtonList class="rz-m-2 rz-mt-2" Orientation="Orientation.Horizontal" @bind-Value="@_model.NeighborhoodTypeId"
+                                                           Data="_neighborhoodTypes"
+                                                           TextProperty="ItemName" ValueProperty="ItemId"
+                                                           TValue="int">
+
+                                    </RadzenRadioButtonList>
+
+                                </ChildContent>
+                            </RadzenFormField>
+                        </RadzenColumn>
+
+
+                        
+                        <RadzenColumn Size="12" SizeMD="2">
+                               <RadzenFormField Text="" Variant="Variant.Outlined" Style="width: 100%;">
+                              
+                    <ChildContent>
+
+   <RadzenButton ButtonStyle="ButtonStyle.Primary" Click="AddNeighborhood" ButtonType="ButtonType.Button" Icon="save" Text="Add Neighborhood" Variant="Variant.Flat" />
+   </ChildContent>
+   </RadzenFormField>
+</RadzenColumn> 
+                
+ 
+</RadzenRow>
+</ChildContent>
+</RadzenFieldset>
+
+ 
+
+</RadzenStack>
+    </RadzenTemplateForm>
+</RadzenColumn>
